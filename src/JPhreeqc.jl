@@ -139,7 +139,7 @@ C Example:
  status = RM_Destroy(id);
 """
 function RM_Destroy(id::Int)
-  IRM_RESULT=ccall((:RM_GetChemistryCellCount, Lib_PhreeqcRM_path), Cint,
+  IRM_RESULT=ccall((:RM_Destroy, Lib_PhreeqcRM_path), Cint,
   (Cint,), id)
 end
 
@@ -208,7 +208,7 @@ for (i = 0; i < ncomps; i++)
 }
 """
 function RM_FindComponents(id::Int)
-  n_components=ccall((:RM_GetChemistryCellCount, Lib_PhreeqcRM_path), Cint,
+  n_components=ccall((:RM_FindComponents, Lib_PhreeqcRM_path), Cint,
   (Cint,), id)
 end
 
@@ -402,7 +402,7 @@ C Example:
 }
 """
 function RM_GetErrorStringLength(id::Int)
-  er_length=ccall((:RM_GetErrorString, Lib_PhreeqcRM_path), Cint,  (Cint,), id)
+  er_length=ccall((:RM_GetErrorStringLength, Lib_PhreeqcRM_path), Cint,  (Cint,), id)
 end
 
 """
@@ -1299,7 +1299,7 @@ status = RM_RunString(id, 1, 0, 1, str);    // workers, initial_phreeqc, utility
 """
 function RM_RunString(id::Int, workers::Int, initial_phreeqc::Int,
   utility::Int, input_string::AbstractString)
-  IRM_RESULT=ccall((:RM_RunFile, Lib_PhreeqcRM_path), Cint,
+  IRM_RESULT=ccall((:RM_RunString, Lib_PhreeqcRM_path), Cint,
   (Cint,Cint,Cint,Cint,Cstring), id, workers, initial_phreeqc,
   utility, input_string)
 end
