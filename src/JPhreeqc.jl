@@ -98,9 +98,9 @@ for (i = 0; i < nxyz/2; i++)
 }
 status = RM_CreateMapping(id, grid2chem);
 """
-function RM_CreateMapping(id::Int, grid2chem::Array{Int,1})
+function RM_CreateMapping(id::Int, grid2chem::Array{Int32,1})
   IRM_RESULT=ccall((:RM_CreateMapping, Lib_PhreeqcRM_path),
-  Cint, (Cint, Ptr{Cdouble}), id, grid2chem)
+  Cint, (Cint, Ptr{Cint}), id, grid2chem)
 end
 
 """
@@ -233,7 +233,7 @@ C Example:
   }
 }
 """
-function RM_GetBackwardMapping(id::Int, n::Int, list::Array{Int,1}, size1::Array{Int,1})
+function RM_GetBackwardMapping(id::Int, n::Int, list::Array{Int32,1}, size1::Array{Int32,1})
   IRM_RESULT=ccall((:RM_GetBackwardMapping, Lib_PhreeqcRM_path), Cint,
   (Cint,Cint,Ptr{Cint},Ptr{Cint}), id,n,list,size1)
 end
@@ -352,7 +352,7 @@ C Example:
 ec = (int*) malloc((size_t) (n * sizeof(int)));
 status = RM_GetEndCell(id, ec);
 """
-function RM_GetEndCell(id::Int, ec::Array{Int,1})
+function RM_GetEndCell(id::Int, ec::Array{Int32,1})
   IRM_RESULT=ccall((:RM_GetEndCell, Lib_PhreeqcRM_path), Cint, (Cint, Ptr{Cint}), id, ec)
 end
 
@@ -882,7 +882,7 @@ C Example:
 sc = (int*) malloc((size_t) (n * sizeof(int)));
 status = RM_GetStartCell(id, sc);
 """
-function RM_GetStartCell(id::Int, sc::Array{Int,1})
+function RM_GetStartCell(id::Int, sc::Array{Int32,1})
   IRM_RESULT=ccall((:RM_GetStartCell, Lib_PhreeqcRM_path), Cint,
   (Cint,Ptr{Cint}), id, sc)
 end
@@ -987,8 +987,8 @@ for (i = 0; i < nbound; i++)
 status = RM_InitialPhreeqc2Concentrations(id, bc_conc, nbound, bc1, bc2, bc_f1);
 """
 function RM_InitialPhreeqc2Concentrations(id::Int, c::Array{Float64,1},
-  n_boundary::Int, boundary_solution1::Array{Int,1},
-  boundary_solution2::Array{Int,1}, fraction1::Array{Float64,1})
+  n_boundary::Int, boundary_solution1::Array{Int32,1},
+  boundary_solution2::Array{Int32,1}, fraction1::Array{Float64,1})
   IRM_RESULT=ccall((:RM_InitialPhreeqc2Concentrations, Lib_PhreeqcRM_path), Cint,
   (Cint,Ptr{Cdouble},Cint,Ptr{Cint},Ptr{Cint},Ptr{Cdouble}),
   id,c,n_boundary,boundary_solution1,boundary_solution2,fraction1)
@@ -1042,8 +1042,8 @@ status = RM_InitialPhreeqc2Module(id, ic1, ic2, f1);
 // No mixing is defined, so the following is equivalent
 status = RM_InitialPhreeqc2Module(id, ic1, NULL, NULL);
 """
-function RM_InitialPhreeqc2Module(id::Int, initial_conditions1::Array{Int,1},
-  initial_conditions2::Array{Int,1}, fraction1::Array{Float64,1})
+function RM_InitialPhreeqc2Module(id::Int, initial_conditions1::Array{Int32,1},
+  initial_conditions2::Array{Int32,1}, fraction1::Array{Float64,1})
   IRM_RESULT=ccall((:RM_InitialPhreeqc2Module, Lib_PhreeqcRM_path), Cint,
   (Cint,Ptr{Cint},Ptr{Cint},Ptr{Cdouble}), id,initial_conditions1,
   initial_conditions2,fraction1)
@@ -1079,8 +1079,8 @@ for (i = 0; i < nbound; i++)
 status = RM_InitialPhreeqc2SpeciesConcentrations(id, bc_conc, nbound, bc1, bc2, bc_f1);
 """
 function RM_InitialPhreeqc2SpeciesConcentrations(id::Int,
-  species_c::Array{Float64,1}, n_boundary::Int, boundary_solution1::Array{Int,1},
-  boundary_solution2::Array{Int,1}, fraction1::Array{Float64,1})
+  species_c::Array{Float64,1}, n_boundary::Int, boundary_solution1::Array{Int32,1},
+  boundary_solution2::Array{Int32,1}, fraction1::Array{Float64,1})
   IRM_RESULT=ccall((:RM_InitialPhreeqc2SpeciesConcentrations, Lib_PhreeqcRM_path),
   Cint,  (Cint,Ptr{Cdouble},Cint,Ptr{Cint},Ptr{Cint},Ptr{Cdouble}),
   id, species_c, n_boundary, boundary_solution1, boundary_solution2, fraction1)
@@ -1107,7 +1107,7 @@ module_cells[1] = 19;
 status = RM_InitialPhreeqcCell2Module(id, -1, module_cells, 2);
 """
 function RM_InitialPhreeqcCell2Module(id::Int, n::Int,
-  module_numbers::Array{Int,1}, dim_module_numbers::Int)
+  module_numbers::Array{Int32,1}, dim_module_numbers::Int)
   IRM_RESULT=ccall((:RM_InitialPhreeqcCell2Module, Lib_PhreeqcRM_path), Cint,
   (Cint,Cint,Ptr{Cint},Cint), id, n, module_numbers, dim_module_numbers)
 end
@@ -1558,7 +1558,7 @@ for (i = 0; i < nxyz/2; i++)
 }
 status = RM_SetPrintChemistryMask(id, print_chemistry_mask);
 """
-function RM_SetPrintChemistryMask(id::Int, cell_mask::Array{Int,1})
+function RM_SetPrintChemistryMask(id::Int, cell_mask::Array{Int32,1})
   IRM_RESULT=ccall((:RM_SetPrintChemistryMask, Lib_PhreeqcRM_path), Cint,
   (Cint,Ptr{Cint}), id, cell_mask)
 end

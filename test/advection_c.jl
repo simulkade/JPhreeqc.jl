@@ -50,7 +50,7 @@ function advection_c()
 	# Partitioning of uz solids
 	status = RM_SetPartitionUZSolids(id, 0)
 	# Demonstation of mapping, no symmetry, only one row of cells
-	grid2chem = collect(Int, 1:nxyz)
+	grid2chem = collect(Int32, 1:nxyz)
 	status = RM_CreateMapping(id, grid2chem)
 	if (status < 0) status = RM_DecodeError(id, status)
 	nchem = RM_GetChemistryCellCount(id)
@@ -107,17 +107,14 @@ function advection_c()
 	# sprintf(str1, "Number of components for transport:               %d\n", RM_GetComponentCount(id))
 	# status = RM_OutputMessage(id, str1)
 	# Get component information
-	components = (char **) malloc((size_t) (ncomps * sizeof(char *)))
-	gfw = (double *) malloc((size_t) (ncomps * sizeof(double)))
+	components = cell(ncomps)
+	gfw = zeros(Float64, ncomps)
 	status = RM_GetGfw(id, gfw)
-	for (i = 0 i < ncomps i++)
-	{
-		components[i] = (char *) malloc((size_t) (100 * sizeof(char *)))
-		status = RM_GetComponent(id, i, components[i], 100)
-		sprintf(str,"%10s    %10.3f\n", components[i], gfw[i])
-		status = RM_OutputMessage(id, str)
-	}
-	status = RM_OutputMessage(id, "\n")
+	for i = 1:ncomps
+		components[i] = string()
+		status = RM_GetComponent(id, i-1, components[i], 100)
+		print(components[i], "\t", gfw[i], "\n")
+	end
 	# Set array of initial conditions
 	ic1 = (int *) malloc((size_t) (7 * nxyz * sizeof(int)))
 	ic2 = (int *) malloc((size_t) (7 * nxyz * sizeof(int)))
