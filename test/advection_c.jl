@@ -7,6 +7,9 @@ An exceptionally beautiful and sunny afternoon
 Lyngby, Denmark
 before using this function, write:
 using JFVM, JPhreeqc
+include("advection_c.jl")
+c=advection_c()
+plot(c[:,3:end])
 """
 function advection_c()
   Nx=40
@@ -63,7 +66,7 @@ function advection_c()
 	# Set printing of chemistry file
 	status = RM_SetPrintChemistryOn(id, 0, 1, 0) # workers, initial_phreeqc, utility
 	# Set printing of chemistry file
-	status = RM_LoadDatabase(id, "/home/ali/MyPackages/JPhreeqc.jl/test/phreeqc.dat")
+	status = RM_LoadDatabase(id, "phreeqc.dat")
 
 	# Demonstration of error handling if ErrorHandlerMode is 0
   # commented out for now (AAE)
@@ -85,7 +88,7 @@ function advection_c()
 	# Argument 1 refers to the workers for doing reaction calculations for transport
 	# Argument 2 refers to the InitialPhreeqc instance for accumulating initial and boundary conditions
 	# Argument 3 refers to the Utility instance
-	status = RM_RunFile(id, 1, 1, 1, "/home/ali/MyPackages/JPhreeqc.jl/test/advect.pqi")
+	status = RM_RunFile(id, 1, 1, 1, "advect.pqi")
 	# Clear contents of workers and utility
 	str="DELETE -all"
 	status = RM_RunString(id, 1, 0, 1, str)	# workers, initial_phreeqc, utility
@@ -225,7 +228,7 @@ function advection_c()
     cell_length=0.002 # [m]
     n_shifts=100*n_cells/40
     ncomp=ncomps
-    c_effluent=zeros(125,ncomp)
+
     time_step=720.0 # [s]
     t_final=n_shifts*time_step # [s]
     porosity=1.0 # only for this example
@@ -272,6 +275,7 @@ function advection_c()
     dt=time_step
     t_end=t_final
     t_step=0
+    c_effluent=zeros(length(dt:dt:t_end),ncomp)
     for t=dt:dt:t_end
       for i=1:ncomp
         M_t[i], RHS_t[i]=transientTerm(C_old[i], dt)
