@@ -1,7 +1,7 @@
 module JPhreeqc
 
 if OS_NAME==:Windows
-  const Lib_PhreeqcRM_path=joinpath(Pkg.dir(), "JPhreeqc", "libphreeqcrm.a")
+  const Lib_PhreeqcRM_path=joinpath(Pkg.dir(), "JPhreeqc", "deps", "libphreeqcrm.a")
 else
   const Lib_PhreeqcRM_path=joinpath("/usr/local/lib", "libphreeqcrm.so")
 end
