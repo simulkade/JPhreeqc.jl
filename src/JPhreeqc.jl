@@ -1,6 +1,10 @@
 module JPhreeqc
 
-const Lib_PhreeqcRM_path=joinpath("/usr/local/lib", "libphreeqcrm.so")
+if OS_NAME==:Windows
+  const Lib_PhreeqcRM_path=joinpath("C:/cygwin64/usr/local/lib", "libphreeqcrm.a")
+else
+  const Lib_PhreeqcRM_path=joinpath("/usr/local/lib", "libphreeqcrm.so")
+end
 #const phreeqc_path1=Libdl.find_library(["libphreeqcrm"], ["/usr/local/lib"])
 
 # Note: int *a -> type: Ptr{Cint} value: ones(Cint, 5)
