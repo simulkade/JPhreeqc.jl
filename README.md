@@ -3,7 +3,9 @@ This package wraps all the C functions of the PhreeqcRM package, except the MPI
 functions (I did not know how to do it).  
 
 ## Installation
-Open Julia and type `Pkg.clone(https://github.com/simulkade/JPhreeqc.jl.git)`
+Open Julia and type `Pkg.clone(https://github.com/simulkade/JPhreeqc.jl.git)`.  
+Note that on windows, a compiled dll is provided in the `deps` folder. In addition, you need to have `Visual Studio 2015` with C++ tools installed for all the library dependencies. You can download [the community edition](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) for free.  
+On Linux, you have to download and build PhreeqcRM yourself, with the default options. I will try to provide the precompiled binaries, but I don't know how to ask Julia to download the correct library during installation (**help please!**).
 
 ## Plan
   - ~~add a test functions~~
