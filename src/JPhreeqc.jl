@@ -997,8 +997,8 @@ status = RM_InitialPhreeqc2Concentrations(id, bc_conc, nbound, bc1, bc2, bc_f1);
 function RM_InitialPhreeqc2Concentrations(id::Int, c::Array{Float64,1},
   n_boundary::Int, boundary_solution1::Array{Int,1},
   boundary_solution2::Array{Int,1}, fraction1::Array{Float64,1})
-  boundary_solution1=convert(Array{Int32, boundary_solution1)
-  boundary_solution2=convert(Array{Int32, boundary_solution2)
+  boundary_solution1=convert(Array{Int32}, boundary_solution1)
+  boundary_solution2=convert(Array{Int32}, boundary_solution2)
   IRM_RESULT=ccall((:RM_InitialPhreeqc2Concentrations, Lib_PhreeqcRM_path), Cint,
   (Cint,Ptr{Cdouble},Cint,Ptr{Cint},Ptr{Cint},Ptr{Cdouble}),
   id,c,n_boundary,boundary_solution1,boundary_solution2,fraction1)
