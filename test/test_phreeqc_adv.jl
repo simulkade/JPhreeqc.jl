@@ -40,7 +40,7 @@ status = RM_SetPrintChemistryMask(id, print_chemistry_mask)
 # Partitioning of uz solids
 status = RM_SetPartitionUZSolids(id, 0)
 # Demonstation of mapping, no symmetry, only one row of cells
-grid2chem = collect(Int32, 0:nxyz)
+grid2chem = collect(Int, 0:nxyz)
 status = RM_CreateMapping(id, grid2chem)
 if (status < 0)
   status = RM_DecodeError(id, status)
@@ -103,7 +103,7 @@ components = cell(ncomps)
 gfw = zeros(Float64, ncomps)
 status = RM_GetGfw(id, gfw)
 for i = 1:ncomps
-  components[i] = string(zeros(10))
+  components[i] = string(zeros(Int,10))
   status = RM_GetComponent(id, i-1, components[i], length(components[i]))
   print(components[i], "\t", gfw[i], "\n")
 end
@@ -111,8 +111,8 @@ end
 # these arrays must be 1D, however it is easier to define them as 2D
 # and use the `:` operator to convert it to 1D
 # each column is for different phreeqc phases
-ic1 = zeros(Int32, nxyz, 7)
-ic2 = zeros(Int32, nxyz, 7)
+ic1 = zeros(Int, nxyz, 7)
+ic2 = zeros(Int, nxyz, 7)
 f1 = zeros(Float64, nxyz, 7)
 ic1[:,1] = 1       # Solution 1
 ic1[:,2] = -1      # Equilibrium phases none
@@ -166,8 +166,8 @@ status = RM_GetConcentrations(id, c) # this is the most important line!
 # --------------------------------------------------------------------------
 
 nbound = 1
-bc1 = zeros(Int32,nbound)
-bc2 = zeros(Int32,nbound)
+bc1 = zeros(Int,nbound)
+bc2 = zeros(Int,nbound)
 bc_f1 = zeros(Float64, nbound)
 bc_conc = zeros(Float64, ncomps*nbound)
 bc1[:]          = 0       # Solution 0 from Initial IPhreeqc instance
