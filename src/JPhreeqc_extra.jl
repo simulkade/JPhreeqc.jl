@@ -41,7 +41,7 @@ nxyx: number of grids
 """
 function getSelectedOutputArray(id::Int, nxyz::Int, isel::Int)
   n_user = RM_GetNthSelectedOutputUserNumber(id, isel)
-  status = RM_SetCurrentSelectedOutputUserNumber(id, n_user)
+  status = RM_SetCurrentSelectedOutputUserNumber(id, Int(n_user))
   # Get double array of selected output values
   col = RM_GetSelectedOutputColumnCount(id)
   # allocate(selected_out(nxyz,col))
@@ -52,7 +52,7 @@ end
 
 function getSelectedOutputHeading(id::Int, isel::Int)
   n_user = RM_GetNthSelectedOutputUserNumber(id, isel)
-  status = RM_SetCurrentSelectedOutputUserNumber(id, n_user)
+  status = RM_SetCurrentSelectedOutputUserNumber(id, Int(n_user))
   col = RM_GetSelectedOutputColumnCount(id)
   heading=cell(col)
   for j = 0:col-1
