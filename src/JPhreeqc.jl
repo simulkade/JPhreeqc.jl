@@ -2119,7 +2119,12 @@ export RM_Abort,
  RM_SetUnitsSurface,
  RM_SpeciesConcentrations2Module,
  RM_UseSolutionDensityVolume,
- RM_WarningMessage
+ RM_WarningMessage,
+ getComponentList,
+ setDefaultPhreeqcProperties,
+ setDefaultPhreeqcUnits,
+ getSelectedOutputArray,
+ getSelectedOutputHeading
 
  # convenience functions
  include("JPhreeqc_extra.jl")

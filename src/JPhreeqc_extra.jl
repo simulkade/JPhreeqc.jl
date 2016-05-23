@@ -10,6 +10,7 @@ function getComponentList(id)
 	for i = 1:ncomps
 		components[i] = string(zeros(10))
 		status = RM_GetComponent(id, i-1, components[i], length(components[i]))
+    components[i]=strip(components[i], '\0')
 	end
   return components
 end
@@ -46,7 +47,7 @@ function getSelectedOutputArray(id::Int, nxyz::Int, isel::Int)
   col = RM_GetSelectedOutputColumnCount(id)
   # allocate(selected_out(nxyz,col))
   selected_out = zeros(Float64, nxyz, col)
-  status = RM_GetSelectedOutput(id, selected_out)
+  status = RM_GetSelectedOutput(id, selected_out[:])
   return selected_out
 end
 
@@ -58,6 +59,7 @@ function getSelectedOutputHeading(id::Int, isel::Int)
   for j = 0:col-1
     heading[j+1]=string(zeros(Int, 25))
     status = RM_GetSelectedOutputHeading(id, j, heading[j+1], length(heading[j+1]))
+    heading[j+1]=strip(heading[j+1], '\0')
   end
   return heading
 end
