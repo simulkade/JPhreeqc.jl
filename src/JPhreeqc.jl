@@ -5,6 +5,7 @@ if OS_NAME==:Windows
 else
   const Lib_PhreeqcRM_path=joinpath("/usr/local/lib", "libphreeqcrm.so")
 end
+
 #const phreeqc_path1=Libdl.find_library(["libphreeqcrm"], ["/usr/local/lib"])
 
 # Note: int *a -> type: Ptr{Cint} value: ones(Cint, 5)
@@ -2119,4 +2120,8 @@ export RM_Abort,
  RM_SpeciesConcentrations2Module,
  RM_UseSolutionDensityVolume,
  RM_WarningMessage
+
+ # convenience functions
+ include("JPhreeqc_extra.jl")
+
 end
