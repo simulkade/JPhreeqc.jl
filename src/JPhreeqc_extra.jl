@@ -33,3 +33,31 @@ function setDefaultPhreeqcUnits(id)
 	status = RM_SetUnitsSSassemblage(id, 1)  # 0, mol/L cell 1, mol/L water 2 mol/L rock
 	status = RM_SetUnitsKinetics(id, 1)      # 0, mol/L cell 1, mol/L water 2 mol/L rock
 end
+
+"""
+id: phreeqcRM instance id
+isel: selected output block number
+nxyx: number of grids
+"""
+function getSelectedOutputArray(id::Int, nxyz::Int, isel::Int)
+  n_user = RM_GetNthSelectedOutputUserNumber(id, isel)
+  status = RM_SetCurrentSelectedOutputUserNumber(id, n_user)
+  # Get double array of selected output values
+  col = RM_GetSelectedOutputColumnCount(id)
+  # allocate(selected_out(nxyz,col))
+  selected_out = zeros(Float64, nxyz, col)
+  status = RM_GetSelectedOutput(id, selected_out)
+  return selected_out
+end
+
+function getSelectedOutputHeading(id::Int, isel::Int)
+  n_user = RM_GetNthSelectedOutputUserNumber(id, isel)
+  status = RM_SetCurrentSelectedOutputUserNumber(id, n_user)
+  col = RM_GetSelectedOutputColumnCount(id)
+  heading=cell(col)
+  for j = 0:col-1
+    heading[j+1]=string(zeros(Int, 25))
+    status = RM_GetSelectedOutputHeading(id, j, heading[j+1], length(heading[j+1]))
+  end
+  return heading
+end
