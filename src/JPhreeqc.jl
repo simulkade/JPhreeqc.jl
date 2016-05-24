@@ -566,6 +566,7 @@ C Example:
 function RM_GetNthSelectedOutputUserNumber(id::Int, n::Int)
   nth_output=ccall((:RM_GetNthSelectedOutputUserNumber, Lib_PhreeqcRM_path), Cint,
   (Cint,Cint), id, n)
+  return Int(nth_output)
 end
 
 """
@@ -620,6 +621,7 @@ end
 """
 function RM_GetSelectedOutputColumnCount(id::Int)
   n_columns_output=ccall((:RM_GetSelectedOutputColumnCount, Lib_PhreeqcRM_path), Cint,  (Cint,), id)
+  return Int(n_columns_output)
 end
 
 """
@@ -645,6 +647,7 @@ C Example:
 """
 function RM_GetSelectedOutputCount(id::Int)
   n_so_count=ccall((:RM_GetSelectedOutputCount, Lib_PhreeqcRM_path), Cint,  (Cint,), id)
+  return Int(n_so_count)
 end
 
 """
@@ -711,6 +714,7 @@ C Example:
 """
 function RM_GetSelectedOutputRowCount(id::Int)
   n_row_output=ccall((:RM_GetSelectedOutputRowCount, Lib_PhreeqcRM_path), Cint,  (Cint,), id)
+  return Int(n_row_output)
 end
 
 """
@@ -928,7 +932,7 @@ C Example:
 status = RM_LogMessage(id, str);
 """
 function RM_GetTime(id::Int)
-  t_simulation=ccall((:RM_GetTime, Lib_PhreeqcRM_path), Cint,  (Cint,), id)
+  t_simulation=ccall((:RM_GetTime, Lib_PhreeqcRM_path), Cdouble,  (Cint,), id)
 end
 
 """
@@ -946,7 +950,7 @@ C Example:
 status = RM_LogMessage(id, str);
 """
 function RM_GetTimeConversion(id::Int)
-  Multiplier=ccall((:RM_GetTimeConversion, Lib_PhreeqcRM_path), Cint,  (Cint,), id)
+  Multiplier=ccall((:RM_GetTimeConversion, Lib_PhreeqcRM_path), Cdouble,  (Cint,), id)
 end
 
 """
@@ -964,7 +968,7 @@ C Example:
 status = RM_LogMessage(id, str);
 """
 function RM_GetTimeStep(id::Int)
-  t_step=ccall((:RM_GetTimeStep, Lib_PhreeqcRM_path), Cint,  (Cint,), id)
+  t_step=ccall((:RM_GetTimeStep, Lib_PhreeqcRM_path), Cdouble,  (Cint,), id)
 end
 
 """
