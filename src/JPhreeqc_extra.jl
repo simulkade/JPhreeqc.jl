@@ -46,9 +46,9 @@ function getSelectedOutputArray(id::Int, nxyz::Int, isel::Int)
   # Get double array of selected output values
   col = RM_GetSelectedOutputColumnCount(id)
   # allocate(selected_out(nxyz,col))
-  selected_out = zeros(Float64, nxyz, col)
-  status = RM_GetSelectedOutput(id, selected_out[:])
-  return selected_out
+  selected_out = zeros(Float64, nxyz*col)
+  status = RM_GetSelectedOutput(id, selected_out)
+  return reshape(selected_out, nxyz, col)
 end
 
 function getSelectedOutputHeading(id::Int, isel::Int)
