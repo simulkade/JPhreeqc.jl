@@ -4,7 +4,7 @@
 components_list=getComponentList(id)
 returns the list of components as a cell array of strings
 """
-function getComponentList(id)
+function getComponentList(id::Int)
   ncomps = RM_FindComponents(id)
   components = cell(ncomps)
 	for i = 1:ncomps
@@ -15,7 +15,7 @@ function getComponentList(id)
   return components
 end
 
-function setDefaultPhreeqcProperties(id)
+function setDefaultPhreeqcProperties(id::Int)
   # Set properties
   status = RM_SetErrorHandlerMode(id, 2)
 	status = RM_SetComponentH2O(id, 0)
@@ -25,7 +25,7 @@ function setDefaultPhreeqcProperties(id)
 	status = RM_SetPartitionUZSolids(id, 0)
 end
 
-function setDefaultPhreeqcUnits(id)
+function setDefaultPhreeqcUnits(id::Int)
   status = RM_SetUnitsSolution(id, 2)      # 1, mg/L 2, mol/L 3, kg/kgs
 	status = RM_SetUnitsPPassemblage(id, 1)  # 0, mol/L cell 1, mol/L water 2 mol/L rock
 	status = RM_SetUnitsExchange(id, 1)      # 0, mol/L cell 1, mol/L water 2 mol/L rock
@@ -33,6 +33,39 @@ function setDefaultPhreeqcUnits(id)
 	status = RM_SetUnitsGasPhase(id, 1)      # 0, mol/L cell 1, mol/L water 2 mol/L rock
 	status = RM_SetUnitsSSassemblage(id, 1)  # 0, mol/L cell 1, mol/L water 2 mol/L rock
 	status = RM_SetUnitsKinetics(id, 1)      # 0, mol/L cell 1, mol/L water 2 mol/L rock
+end
+
+"""
+The default call to this function assumes that an aqueous solution exists in all cells.
+aq_solution: 1 means exist, -1 means does not exist
+"""
+function setInitialVectors(id::Int, nxyz::Int; aq_solution::Int=1, eq_phase::Int=0, ion_exchange::Int=0,
+                             surface_site::Int==0, gas_phase::Int=0, solid_solution::Int=0, kin_reaction::Int=0) 
+	ic1 = zeros(Int, nxyz, 7)
+	ic2 = zeros(Int, nxyz, 7)
+	f1 = zeros(Float64, nxyz, 7)
+	ic1[:,1] = 1       # Solution 1
+	ic1[:,2] = -1      # Equilibrium phases none
+	ic1[:,3] = -1       # Exchange none
+	ic1[:,4] = -1      # Surface 1
+	ic1[:,5] = -1      # Gas phase none
+	ic1[:,6] = -1      # Solid solutions none
+	ic1[:,7] = -1      # Kinetics none
+	ic2[:,1] = -1      # Solution none
+	ic2[:,2] = -1      # Equilibrium phases none
+	ic2[:,3] = -1      # Exchange none
+	ic2[:,4] = -1      # Surface none
+	ic2[:,5] = -1      # Gas phase none
+	ic2[:,6] = -1      # Solid solutions none
+	ic2[:,7] = -1      # Kinetics none
+	f1[:,1]  = 1.0      # Mixing fraction ic1 Solution
+	f1[:,2] = 1.0      # Mixing fraction ic1 Equilibrium phases
+	f1[:,3] = 1.0      # Mixing fraction ic1 Exchange 1
+	f1[:,4] = 1.0      # Mixing fraction ic1 Surface
+	f1[:,5] = 1.0      # Mixing fraction ic1 Gas phase
+	f1[:,6] = 1.0      # Mixing fraction ic1 Solid solutions
+	f1[:,7] = 1.0      # Mixing fraction ic1 Kinetics
+	return ic1, ic2, f1
 end
 
 """
@@ -63,3 +96,4 @@ function getSelectedOutputHeading(id::Int, isel::Int)
   end
   return heading
 end
+
