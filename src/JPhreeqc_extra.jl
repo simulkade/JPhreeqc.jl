@@ -24,7 +24,7 @@ function getSpeciesList(id::Int)
   n_species = RM_GetSpeciesCount(id)
   species = cell(n_species)
 	for i = 1:n_species
-		species[i] = string(zeros(10))
+		species[i] = string(zeros(20))
 		status = RM_GetComponent(id, i-1, species[i], length(species[i]))
     species[i]=strip(species[i], '\0')
 	end
@@ -56,7 +56,7 @@ The default call to this function assumes that an aqueous solution exists in all
 aq_solution: 1 means exist, -1 means does not exist
 """
 function setInitialVectors(id::Int, nxyz::Int; aq_solution::Int=1, eq_phase::Int=0, ion_exchange::Int=0,
-                             surface_site::Int==0, gas_phase::Int=0, solid_solution::Int=0, kin_reaction::Int=0) 
+                             surface_site::Int=0, gas_phase::Int=0, solid_solution::Int=0, kin_reaction::Int=0) 
 	ic1 = zeros(Int, nxyz, 7)
 	ic2 = zeros(Int, nxyz, 7)
 	f1 = zeros(Float64, nxyz, 7)
