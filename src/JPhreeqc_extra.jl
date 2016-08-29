@@ -20,12 +20,13 @@ species_list=getSpeciesList(id)
 returns the list of ionic species as a cell array of strings
 """
 function getSpeciesList(id::Int)
+  RM_SetSpeciesSaveOn(id, 1)
   ncomps = RM_FindComponents(id)
   n_species = RM_GetSpeciesCount(id)
   species = cell(n_species)
 	for i = 1:n_species
 		species[i] = string(zeros(20))
-		status = RM_GetComponent(id, i-1, species[i], length(species[i]))
+		status = RM_GetSpeciesName(id, i-1, species[i], length(species[i]))
     species[i]=strip(species[i], '\0')
 	end
   return species
