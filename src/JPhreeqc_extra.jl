@@ -2,7 +2,7 @@
 
 """
 components_list=getComponentList(id)
-returns the list of components as a cell array of strings
+returns the list of components (elements and charge) as a cell array of strings
 """
 function getComponentList(id::Int)
   ncomps = RM_FindComponents(id)
@@ -13,6 +13,22 @@ function getComponentList(id::Int)
     components[i]=strip(components[i], '\0')
 	end
   return components
+end
+
+"""
+species_list=getSpeciesList(id)
+returns the list of ionic species as a cell array of strings
+"""
+function getSpeciesList(id::Int)
+  ncomps = RM_FindComponents(id)
+  n_species = RM_GetSpeciesCount(id)
+  species = cell(n_species)
+	for i = 1:n_species
+		species[i] = string(zeros(10))
+		status = RM_GetComponent(id, i-1, species[i], length(species[i]))
+    species[i]=strip(species[i], '\0')
+	end
+  return species
 end
 
 function setDefaultPhreeqcProperties(id::Int)
