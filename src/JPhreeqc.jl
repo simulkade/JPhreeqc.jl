@@ -2128,7 +2128,9 @@ export RM_Abort,
  setDefaultPhreeqcProperties,
  setDefaultPhreeqcUnits,
  getSelectedOutputArray,
- getSelectedOutputHeading
+ getSelectedOutputHeading,
+ getSpeciesList,
+ setInitialVectors
 
  # convenience functions
  include("JPhreeqc_extra.jl")
