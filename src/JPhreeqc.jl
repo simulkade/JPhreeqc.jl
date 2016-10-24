@@ -1,10 +1,14 @@
 module JPhreeqc
 
-if OS_NAME==:Windows
+if is_windows()
   const Lib_PhreeqcRM_path=joinpath(Pkg.dir(), "JPhreeqc", "deps", "PhreeqcRMd.dll")
-else
+elseif is_linux()
   const Lib_PhreeqcRM_path=joinpath("/usr/local/lib", "libphreeqcrm.so")
+else
+  error("No binary files for your OS. Only Windows and Linux at the moment!")
 end
+
+
 
 #const phreeqc_path1=Libdl.find_library(["libphreeqcrm"], ["/usr/local/lib"])
 
