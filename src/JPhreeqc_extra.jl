@@ -6,7 +6,7 @@ returns the list of components (elements and charge) as a cell array of strings
 """
 function getComponentList(id::Int)
   ncomps = RM_FindComponents(id)
-  components = cell(ncomps)
+  components = Array{String}(ncomps)
 	for i = 1:ncomps
 		components[i] = string(zeros(10))
 		status = RM_GetComponent(id, i-1, components[i], length(components[i]))
@@ -23,7 +23,7 @@ function getSpeciesList(id::Int)
   RM_SetSpeciesSaveOn(id, 1)
   ncomps = RM_FindComponents(id)
   n_species = RM_GetSpeciesCount(id)
-  species = cell(n_species)
+  species = Array{String}(n_species)
 	for i = 1:n_species
 		species[i] = string(zeros(20))
 		status = RM_GetSpeciesName(id, i-1, species[i], length(species[i]))
@@ -57,7 +57,7 @@ The default call to this function assumes that an aqueous solution exists in all
 aq_solution: 1 means exist, -1 means does not exist
 """
 function setInitialVectors(id::Int, nxyz::Int; aq_solution::Int=1, eq_phase::Int=0, ion_exchange::Int=0,
-                             surface_site::Int=0, gas_phase::Int=0, solid_solution::Int=0, kin_reaction::Int=0) 
+                             surface_site::Int=0, gas_phase::Int=0, solid_solution::Int=0, kin_reaction::Int=0)
 	ic1 = zeros(Int, nxyz, 7)
 	ic2 = zeros(Int, nxyz, 7)
 	f1 = zeros(Float64, nxyz, 7)
@@ -105,7 +105,7 @@ function getSelectedOutputHeading(id::Int, isel::Int)
   n_user = RM_GetNthSelectedOutputUserNumber(id, isel)
   status = RM_SetCurrentSelectedOutputUserNumber(id, Int(n_user))
   col = RM_GetSelectedOutputColumnCount(id)
-  heading=cell(col)
+  heading=Array{String}(col)
   for j = 0:col-1
     heading[j+1]=string(zeros(Int, 25))
     status = RM_GetSelectedOutputHeading(id, j, heading[j+1], length(heading[j+1]))
@@ -113,4 +113,3 @@ function getSelectedOutputHeading(id::Int, isel::Int)
   end
   return heading
 end
-

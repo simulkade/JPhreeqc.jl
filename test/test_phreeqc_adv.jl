@@ -158,6 +158,7 @@ status = RM_SetTime(id, time1)
 status = RM_SetTimeStep(id, time_step)
 status = RM_RunCells(id)
 status = RM_GetConcentrations(id, c) # this is the most important line!
+print(c)
 # AAE: what I did in matlab was to get the volume from phreeqc and scale the
 # amount of solution in each cell
 # print(c)
