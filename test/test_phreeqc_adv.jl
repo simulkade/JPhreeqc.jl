@@ -99,7 +99,7 @@ ncomps = RM_FindComponents(id)
 # sprintf(str1, "Number of components for transport:               %d\n", RM_GetComponentCount(id))
 # status = RM_OutputMessage(id, str1)
 # Get component information
-components = cell(ncomps)
+components = Array{Any}(ncomps)
 gfw = zeros(Float64, ncomps)
 status = RM_GetGfw(id, gfw)
 for i = 1:ncomps

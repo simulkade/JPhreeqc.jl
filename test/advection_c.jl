@@ -112,7 +112,7 @@ function advection_c()
 	# sprintf(str1, "Number of components for transport:               %d\n", RM_GetComponentCount(id))
 	# status = RM_OutputMessage(id, str1)
 	# Get component information
-	components = cell(ncomps)
+	components = Array{Any}(ncomps)
 	gfw = zeros(Float64, ncomps)
 	status = RM_GetGfw(id, gfw)
 	for i = 1:ncomps
@@ -236,7 +236,7 @@ function advection_c()
     Lx=n_cells*cell_length # [m] domain length
     m=createMesh1D(Nx, Lx)
     Ux=createFaceVariable(m, u_x)
-    BC=cell(ncomp)
+    BC=Array{Any}(ncomp)
     BC_right=zeros(ncomp)
     for i=1:ncomp
       BC[i]=createBC(m)
@@ -255,18 +255,18 @@ function advection_c()
     # initial conditions
     c_init=reshape(c,n_cells, Int64(ncomp))
     c_transport=zeros(Float64, n_cells, ncomp)
-    C_old=cell(ncomp)
-    C_new=cell(ncomp)
+    C_old=Array{Any}(ncomp)
+    C_new=Array{Any}(ncomp)
     for i=1:ncomp
       C_old[i]=createCellVariable(m, c_init[:,i], BC[i]) # only for 1D; reshapeCell for 2D,3D
       C_new[i]=copyCell(C_old[i])
     end
-    M_bc     = cell(ncomp)
-    RHS_bc   = cell(ncomp)
-    M_conv   = cell(ncomp)
-    RHS_conv = cell(ncomp)
-    M_t      = cell(ncomp)
-    RHS_t    = cell(ncomp)
+    M_bc     = Array{Any}(ncomp)
+    RHS_bc   = Array{Any}(ncomp)
+    M_conv   = Array{Any}(ncomp)
+    RHS_conv = Array{Any}(ncomp)
+    M_t      = Array{Any}(ncomp)
+    RHS_t    = Array{Any}(ncomp)
     for i=1:ncomp
         M_bc[i], RHS_bc[i]=boundaryConditionTerm(BC[i])
         M_conv[i]=convectionUpwindTerm(Ux)
