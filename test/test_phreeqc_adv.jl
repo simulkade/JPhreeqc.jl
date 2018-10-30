@@ -99,7 +99,7 @@ ncomps = RM_FindComponents(id)
 # sprintf(str1, "Number of components for transport:               %d\n", RM_GetComponentCount(id))
 # status = RM_OutputMessage(id, str1)
 # Get component information
-components = Array{Any}(ncomps)
+components = Array{Any}(undef, ncomps)
 gfw = zeros(Float64, ncomps)
 status = RM_GetGfw(id, gfw)
 for i = 1:ncomps
@@ -114,27 +114,27 @@ end
 ic1 = zeros(Int, nxyz, 7)
 ic2 = zeros(Int, nxyz, 7)
 f1 = zeros(Float64, nxyz, 7)
-ic1[:,1] = 1       # Solution 1
-ic1[:,2] = -1      # Equilibrium phases none
-ic1[:,3] = 1       # Exchange 1
-ic1[:,4] = -1      # Surface none
-ic1[:,5] = -1      # Gas phase none
-ic1[:,6] = -1      # Solid solutions none
-ic1[:,7] = -1      # Kinetics none
-ic2[:,1] = -1      # Solution none
-ic2[:,2] = -1      # Equilibrium phases none
-ic2[:,3] = -1      # Exchange none
-ic2[:,4] = -1      # Surface none
-ic2[:,5] = -1      # Gas phase none
-ic2[:,6] = -1      # Solid solutions none
-ic2[:,7] = -1      # Kinetics none
-f1[:,1]  = 1.0      # Mixing fraction ic1 Solution
-f1[:,2] = 1.0      # Mixing fraction ic1 Equilibrium phases
-f1[:,3] = 1.0      # Mixing fraction ic1 Exchange 1
-f1[:,4] = 1.0      # Mixing fraction ic1 Surface
-f1[:,5] = 1.0      # Mixing fraction ic1 Gas phase
-f1[:,6] = 1.0      # Mixing fraction ic1 Solid solutions
-f1[:,7] = 1.0      # Mixing fraction ic1 Kinetics
+ic1[:,1] .= 1       # Solution 1
+ic1[:,2] .= -1      # Equilibrium phases none
+ic1[:,3] .= 1       # Exchange 1
+ic1[:,4] .= -1      # Surface none
+ic1[:,5] .= -1      # Gas phase none
+ic1[:,6] .= -1      # Solid solutions none
+ic1[:,7] .= -1      # Kinetics none
+ic2[:,1] .= -1      # Solution none
+ic2[:,2] .= -1      # Equilibrium phases none
+ic2[:,3] .= -1      # Exchange none
+ic2[:,4] .= -1      # Surface none
+ic2[:,5] .= -1      # Gas phase none
+ic2[:,6] .= -1      # Solid solutions none
+ic2[:,7] .= -1      # Kinetics none
+f1[:,1]  .= 1.0      # Mixing fraction ic1 Solution
+f1[:,2] .= 1.0      # Mixing fraction ic1 Equilibrium phases
+f1[:,3] .= 1.0      # Mixing fraction ic1 Exchange 1
+f1[:,4] .= 1.0      # Mixing fraction ic1 Surface
+f1[:,5] .= 1.0      # Mixing fraction ic1 Gas phase
+f1[:,6] .= 1.0      # Mixing fraction ic1 Solid solutions
+f1[:,7] .= 1.0      # Mixing fraction ic1 Kinetics
 status = RM_InitialPhreeqc2Module(id, ic1[:], ic2[:], f1[:])
 # No mixing is defined, so the following is equivalent
 # AAE: the following does not work with the current JPhreeqc
@@ -171,9 +171,9 @@ bc1 = zeros(Int,nbound)
 bc2 = zeros(Int,nbound)
 bc_f1 = zeros(Float64, nbound)
 bc_conc = zeros(Float64, ncomps*nbound)
-bc1[:]          = 0       # Solution 0 from Initial IPhreeqc instance
-bc2[:]          = -1      # no bc2 solution for mixing
-bc_f1[:]        = 1.0     # mixing fraction for bc1
+bc1[:]          .= 0       # Solution 0 from Initial IPhreeqc instance
+bc2[:]          .= -1      # no bc2 solution for mixing
+bc_f1[:]        .= 1.0     # mixing fraction for bc1
 
 status = RM_InitialPhreeqc2Concentrations(id, bc_conc, nbound, bc1, bc2, bc_f1)
 print(bc_conc)
@@ -188,9 +188,9 @@ volume = zeros(Float64, nxyz)
 pressure = zeros(Float64, nxyz)
 temperature = zeros(Float64, nxyz)
 sat_calc = zeros(Float64, nxyz)
-density[:] = 1.0
-pressure[:] = 2.0
-temperature[:] = 20.0
+density[:] .= 1.0
+pressure[:] .= 2.0
+temperature[:] .= 20.0
 
 status = RM_SetDensity(id, density)
 status = RM_SetPressure(id, pressure)
