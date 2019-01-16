@@ -105,7 +105,7 @@ function getSelectedOutputHeading(id::Int, isel::Int)
   n_user = RM_GetNthSelectedOutputUserNumber(id, isel)
   status = RM_SetCurrentSelectedOutputUserNumber(id, Int(n_user))
   col = RM_GetSelectedOutputColumnCount(id)
-  heading=Array{String}(col)
+  heading=Array{String}(undef, col)
   for j = 0:col-1
     heading[j+1]=string(zeros(Int, 25))
     status = RM_GetSelectedOutputHeading(id, j, heading[j+1], length(heading[j+1]))
