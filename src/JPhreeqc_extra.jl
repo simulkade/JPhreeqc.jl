@@ -6,7 +6,7 @@ returns the list of components (elements and charge) as a cell array of strings
 """
 function getComponentList(id::Int)
   ncomps = RM_FindComponents(id)
-  components = Array{String}(ncomps)
+  components = Array{String}(undef, ncomps)
 	for i = 1:ncomps
 		components[i] = string(zeros(10))
 		status = RM_GetComponent(id, i-1, components[i], length(components[i]))
