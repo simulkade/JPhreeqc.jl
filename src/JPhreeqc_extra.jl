@@ -38,18 +38,21 @@ function setDefaultPhreeqcProperties(id::Int)
 	status = RM_SetComponentH2O(id, 0)
 	status = RM_SetRebalanceFraction(id, 0.5)
 	status = RM_SetRebalanceByCell(id, 1)
+	# False indicates that the solution density set by SetDensity and the volume 
+	# determined by the product of SetSaturation, SetPorosity, and SetRepresentativeVolume, 
+	# will be used to calculate concentrations retrieved by GetConcentrations:
 	status = RM_UseSolutionDensityVolume(id, 0)
 	status = RM_SetPartitionUZSolids(id, 0)
 end
 
 function setDefaultPhreeqcUnits(id::Int)
   status = RM_SetUnitsSolution(id, 2)      # 1, mg/L 2, mol/L 3, kg/kgs
-	status = RM_SetUnitsPPassemblage(id, 1)  # 0, mol/L cell 1, mol/L water 2 mol/L rock
-	status = RM_SetUnitsExchange(id, 1)      # 0, mol/L cell 1, mol/L water 2 mol/L rock
-	status = RM_SetUnitsSurface(id, 1)       # 0, mol/L cell 1, mol/L water 2 mol/L rock
-	status = RM_SetUnitsGasPhase(id, 1)      # 0, mol/L cell 1, mol/L water 2 mol/L rock
-	status = RM_SetUnitsSSassemblage(id, 1)  # 0, mol/L cell 1, mol/L water 2 mol/L rock
-	status = RM_SetUnitsKinetics(id, 1)      # 0, mol/L cell 1, mol/L water 2 mol/L rock
+	status = RM_SetUnitsPPassemblage(id, 0)  # 0, mol/L RV 1, mol/L water 2 mol/L rock
+	status = RM_SetUnitsExchange(id, 0)      # 0, mol/L RV 1, mol/L water 2 mol/L rock
+	status = RM_SetUnitsSurface(id, 0)       # 0, mol/L RV 1, mol/L water 2 mol/L rock
+	status = RM_SetUnitsGasPhase(id, 0)      # 0, mol/L RV 1, mol/L water 2 mol/L rock
+	status = RM_SetUnitsSSassemblage(id, 0)  # 0, mol/L RV 1, mol/L water 2 mol/L rock
+	status = RM_SetUnitsKinetics(id, 0)      # 0, mol/L RV 1, mol/L water 2 mol/L rock
 end
 
 """
