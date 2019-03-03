@@ -1,6 +1,9 @@
 # Julia wrapper for PhreeqcRM package
 This package wraps all the C functions of the PhreeqcRM package, except the MPI
-functions (I did not know how to do it).  
+functions (I did not know how to do it).
+
+## Pease cite as
+[![DOI](https://zenodo.org/badge/58193697.svg)](https://zenodo.org/badge/latestdoi/58193697)
 
 ## Installation
 Open Julia and type `Pkg.clone(https://github.com/simulkade/JPhreeqc.jl.git)`.  
