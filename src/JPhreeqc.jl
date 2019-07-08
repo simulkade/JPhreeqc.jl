@@ -1,9 +1,9 @@
 module JPhreeqc
 
 if Sys.iswindows()
-  const Lib_PhreeqcRM_path=joinpath(@__DIR__, "..", "deps", "PhreeqcRMd.dll")
+  const Lib_PhreeqcRM_path=joinpath(@__DIR__, "..", "lib", "PhreeqcRM.dll")
 elseif Sys.islinux()
-  const Lib_PhreeqcRM_path=joinpath("/usr/local/lib", "libphreeqcrm.so")
+  const Lib_PhreeqcRM_path=joinpath(@__DIR__, "..", "lib", "libphreeqcrm.so")
 else
   error("No binary files for your OS. Only Windows and Linux at the moment!")
 end
