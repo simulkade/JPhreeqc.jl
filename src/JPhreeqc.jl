@@ -15,6 +15,48 @@ end
 # Note: int *a -> type: Ptr{Cint} value: ones(Cint, 5)
 # Note: double *c -> type: Ptr{Cdouble} value ones(Cdouble, 5)
 # Note: char* (string) -> Cstring or Ptr{UInt8}
+
+"""
+Abort the program. Result will be interpreted as an IRM_RESULT value and decoded;
+err_str will be printed; and the reaction module will be destroyed. If using MPI, an MPI_Abort message will be sent before the reaction module is destroyed. If the id is an invalid instance, RM_Abort will return a value of IRM_BADINSTANCE, otherwise the program will exit with a return code of 4.
+
+Parameters
+id	The instance id returned from RM_Create.
+result	Integer treated as an IRM_RESULT return code.
+err_str	String to be printed as an error message.
+Return values
+IRM_RESULT	Program will exit before returning unless id is an invalid reaction module id.
+See also
+RM_Destroy, RM_ErrorMessage.
+C Example:
+ iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm);
+strcpy(str, "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
+status = RunString(iphreeqc_id, str);
+if (status != 0) status = RM_Abort(id, status, "IPhreeqc RunString failed");
+"""
+function RM_Abort(id::Int, result::Int, err_str::AbstractString)
+  IRM_RESULT=ccall((:RM_Abort, Lib_PhreeqcRM_path), Cint,
+  (Cint, Cint, Cstring), id, result, err_str)
+end
+
+"""
+Close the output and log files.
+
+Parameters
+id	The instance id returned from RM_Create.
+Return values
+IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+See also
+RM_OpenFiles, RM_SetFilePrefix
+C Example:
+ status = RM_CloseFiles(id);
+MPI:
+Called only by root.
+"""
+function RM_CloseFiles(id::Int)
+  IRM_RESULT=ccall((:RM_CloseFiles, Lib_PhreeqcRM_path), Cint, (Cint,), id)
+end
+
 """
 Creates a reaction module. If the code is compiled with the preprocessor directive
 USE_OPENMP, the reaction module is multithreaded. If the code is compiled
@@ -38,23 +80,6 @@ function RM_Create(nxyz::Int, n_threads::Int)
   return convert(Int, phreeqc_id)
 end
 
-"""
-Close the output and log files.
-
-Parameters
-id	The instance id returned from RM_Create.
-Return values
-IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
-See also
-RM_OpenFiles, RM_SetFilePrefix
-C Example:
- status = RM_CloseFiles(id);
-MPI:
-Called only by root.
-"""
-function RM_CloseFiles(id::Int)
-  IRM_RESULT=ccall((:RM_CloseFiles, Lib_PhreeqcRM_path), Cint, (Cint,), id)
-end
 
 """
 N sets of component concentrations are converted to SOLUTIONs numbered 1-n in the Utility IPhreeqc. The solutions can be reacted and manipulated with the methods of IPhreeqc. If solution concentration units (RM_SetUnitsSolution) are per liter, one liter of solution is created in the Utility instance; if solution concentration units are mass fraction, one kilogram of solution is created in the Utility instance. The motivation for this method is the mixing of solutions in wells, where it may be necessary to calculate solution properties (pH for example) or react the mixture to form scale minerals. The code fragments below make a mixture of concentrations and then calculate the pH of the mixture.
@@ -111,29 +136,6 @@ function RM_CreateMapping(id::Int, grid2chem::Array{Int,1})
   grid2chem=convert(Array{Int32}, grid2chem)
   IRM_RESULT=ccall((:RM_CreateMapping, Lib_PhreeqcRM_path),
   Cint, (Cint, Ptr{Cint}), id, grid2chem)
-end
-
-"""
-Abort the program. Result will be interpreted as an IRM_RESULT value and decoded;
-err_str will be printed; and the reaction module will be destroyed. If using MPI, an MPI_Abort message will be sent before the reaction module is destroyed. If the id is an invalid instance, RM_Abort will return a value of IRM_BADINSTANCE, otherwise the program will exit with a return code of 4.
-
-Parameters
-id	The instance id returned from RM_Create.
-result	Integer treated as an IRM_RESULT return code.
-err_str	String to be printed as an error message.
-Return values
-IRM_RESULT	Program will exit before returning unless id is an invalid reaction module id.
-See also
-RM_Destroy, RM_ErrorMessage.
-C Example:
- iphreeqc_id = RM_Concentrations2Utility(id, c_well, 1, tc, p_atm);
-strcpy(str, "SELECTED_OUTPUT 5; -pH; RUN_CELLS; -cells 1");
-status = RunString(iphreeqc_id, str);
-if (status != 0) status = RM_Abort(id, status, "IPhreeqc RunString failed");
-"""
-function RM_Abort(id::Int, result::Int, err_str::AbstractString)
-  IRM_RESULT=ccall((:RM_Abort, Lib_PhreeqcRM_path), Cint,
-  (Cint, Cint, Cstring), id, result, err_str)
 end
 
 """
