@@ -1,0 +1,5 @@
+name = "JPhreeqc"
+uuid = "0aed6789-abdf-5d29-943e-0086a5b77461"
+version = "0.1.0"
+[compat]
+julia = "≥ 1.0.0"
