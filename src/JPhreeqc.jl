@@ -372,6 +372,64 @@ function RM_GetEndCell(id::Int, ec::Array{Int32,1})
 end
 
 """
+Returns the number of equilibrium phases in the initial-phreeqc module. RM_FindComponents must be called before RM_GetEquilibriumPhasesCount. This method may be useful when generating selected output definitions related to equilibrium phases.
+
+Parameters
+    id	The instance id returned from RM_Create.
+
+Return values
+    The	number of equilibrium phases in the initial-phreeqc module.
+
+See also
+    RM_FindComponents, RM_GetEquilibriumPhasesName. 
+
+C Example:
+
+    strcat(input, "  -equilibrium_phases\n");
+    for (i = 0; i < RM_GetEquilibriumPhasesCount(id); i++)
+    {
+    status = RM_GetEquilibriumPhasesName(id, i, line1, 100);
+    sprintf(line, "%4s%20s\n", "    ", line1);
+    strcat(input, line);
+    }
+"""
+function RM_GetEquilibriumPhasesCount(id::Int)
+  n_components=ccall((:RM_GetEquilibriumPhasesCount, Lib_PhreeqcRM_path), Cint, (Cint,), id)
+  return convert(Int, n_components)
+end
+
+"""
+Retrieves an item from the equilibrium phase list. The list includes all phases included in any EQUILIBRIUM_PHASES definitions in the initial-phreeqc module. RM_FindComponents must be called before RM_GetEquilibriumPhasesName. This method may be useful when generating selected output definitions related to equilibrium phases.
+
+Parameters
+    id	The instance id returned from RM_Create.
+    num	The number of the equilibrium phase name to be retrieved. Fortran, 1 based.
+    name	The equilibrium phase name at number num.
+    l1	The length of the maximum number of characters for name.
+
+Return values
+    IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+
+See also
+    RM_FindComponents, RM_GetEquilibriumPhasesCount. 
+
+C Example:
+
+    strcat(input, "  -equilibrium_phases\n");
+    for (i = 0; i < RM_GetEquilibriumPhasesCount(id); i++)
+    {
+    status = RM_GetEquilibriumPhasesName(id, i, line1, 100);
+    sprintf(line, "%4s%20s\n", "    ", line1);
+    strcat(input, line);
+    }
+"""
+function RM_GetEquilibriumPhasesName(id::Int, num::Int, chem_name::AbstractString, l::Int)
+  IRM_RESULT=ccall((:RM_GetEquilibriumPhasesName, Lib_PhreeqcRM_path), Cint,
+  (Cint, Cint, Ptr{UInt8}, Cint), id, num, chem_name, l)
+end
+
+
+"""
 Returns a string containing error messages related to the last call to a PhreeqcRM method to the character argument (errstr).
 
 Parameters
@@ -421,6 +479,96 @@ function RM_GetErrorStringLength(id::Int)
 end
 
 """
+Retrieves an item from the exchange name list. RM_FindComponents must be called before RM_GetExchangeName. The exchange names vector is the same length as the exchange species names vector and provides the corresponding exchange site (for example, X corresponing to NaX). This method may be useful when generating selected output definitions related to exchangers.
+
+Parameters
+    id	The instance id returned from RM_Create.
+    num	The number of the exchange name to be retrieved. Fortran, 1 based.
+    name	The exchange name associated with exchange species num.
+    l1	The length of the maximum number of characters for name.
+
+Return values
+    IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+
+See also
+    RM_FindComponents, RM_GetExchangeSpeciesCount, RM_GetExchangeSpeciesName. 
+
+C Example:
+
+    for (i = 0; i < RM_GetExchangeSpeciesCount(id); i++)
+    {
+    strcpy(line, "");
+    status = RM_GetExchangeSpeciesName(id, i, line1, 100);
+    status = RM_GetExchangeName(id, i, line2, 100);
+    sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+    strcat(input, line);
+    }
+"""
+function RM_GetExchangeName(id::Int, num::Int, chem_name::AbstractString, l::Int)
+  IRM_RESULT=ccall((:RM_GetExchangeName, Lib_PhreeqcRM_path), Cint,
+  (Cint, Cint, Ptr{UInt8}, Cint), id, num, chem_name, l)
+end
+
+"""
+Returns the number of exchange species in the initial-phreeqc module. RM_FindComponents must be called before RM_GetExchangeSpeciesCount. This method may be useful when generating selected output definitions related to exchangers.
+
+Parameters
+    id	The instance id returned from RM_Create.
+
+Return values
+    The	number of exchange species in the initial-phreeqc module.
+
+See also
+    RM_FindComponents, RM_GetExchangeSpeciesName, RM_GetExchangeName. 
+
+C Example:
+
+    for (i = 0; i < RM_GetExchangeSpeciesCount(id); i++)
+    {
+    strcpy(line, "");
+    status = RM_GetExchangeSpeciesName(id, i, line1, 100);
+    status = RM_GetExchangeName(id, i, line2, 100);
+    sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+    strcat(input, line);
+    }
+"""
+function RM_GetExchangeSpeciesCount(id::Int)
+  n_components=ccall((:RM_GetExchangeSpeciesCount, Lib_PhreeqcRM_path), Cint, (Cint,), id)
+  return convert(Int, n_components)
+end
+
+"""
+Retrieves an item from the exchange species list. The list of exchange species (such as "NaX") is derived from the list of components (RM_FindComponents) and the list of all exchange names (such as "X") that are included in EXCHANGE definitions in the initial-phreeqc module. RM_FindComponents must be called before RM_GetExchangeSpeciesName. This method may be useful when generating selected output definitions related to exchangers.
+
+Parameters
+    id	The instance id returned from RM_Create.
+    num	The number of the exchange species to be retrieved. Fortran, 1 based.
+    name	The exchange species name at number num.
+    l1	The length of the maximum number of characters for name.
+
+Return values
+    IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+
+See also
+    RM_FindComponents, RM_GetExchangeSpeciesCount, RM_GetExchangeName. 
+
+C Example:
+
+    for (i = 0; i < RM_GetExchangeSpeciesCount(id); i++)
+    {
+    strcpy(line, "");
+    status = RM_GetExchangeSpeciesName(id, i, line1, 100);
+    status = RM_GetExchangeName(id, i, line2, 100);
+    sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+    strcat(input, line);
+    }
+"""
+function RM_GetExchangeSpeciesName(id::Int, num::Int, chem_name::AbstractString, l::Int)
+  IRM_RESULT=ccall((:RM_GetExchangeSpeciesName, Lib_PhreeqcRM_path), Cint,
+  (Cint, Cint, Ptr{UInt8}, Cint), id, num, chem_name, l)
+end
+
+"""
 Returns the reaction-module file prefix to the character argument (prefix).
 
 Parameters
@@ -442,6 +590,63 @@ status = RM_OutputMessage(id, str1);
 function RM_GetFilePrefix(id::Int, prefix::AbstractString, l::Int)
   IRM_RESULT=ccall((:RM_GetFilePrefix, Lib_PhreeqcRM_path), Cint,
   (Cint,Cstring,Cint), id, prefix, l)
+end
+
+"""
+Returns the number of gas phase components in the initial-phreeqc module. RM_FindComponents must be called before RM_GetGasComponentsCount. This method may be useful when generating selected output definitions related to gas phases.
+
+Parameters
+    id	The instance id returned from RM_Create.
+
+Return values
+    The	number of gas phase components in the initial-phreeqc module.
+
+See also
+    RM_FindComponents, RM_GetGasComponentsName. 
+
+C Example:
+
+    strcat(input, "  -gases\n");
+    for (i = 0; i < RM_GetGasComponentsCount(id); i++)
+    {
+    status = RM_GetGasComponentsName(id, i, line1, 100);
+    sprintf(line, "%4s%20s\n", "    ", line1);
+    strcat(input, line);
+    }
+"""
+function RM_GetGasComponentsCount(id::Int)
+  n_components=ccall((:RM_GetGasComponentsCount, Lib_PhreeqcRM_path), Cint, (Cint,), id)
+  return convert(Int, n_components)
+end
+
+"""
+Retrieves an item from the gas components list. The list includes all gas components included in any GAS_PHASE definitions in the initial-phreeqc module. RM_FindComponents must be called before RM_GetGasComponentsName. This method may be useful when generating selected output definitions related to gas phases.
+
+Parameters
+    id	The instance id returned from RM_Create.
+    num	The number of the gas component name to be retrieved. Fortran, 1 based.
+    name	The gas component name at number num.
+    l1	The length of the maximum number of characters for name.
+
+Return values
+    IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+
+See also
+    RM_FindComponents, RM_GetGasComponentsCount. 
+
+C Example:
+
+    strcat(input, "  -gases\n");
+    for (i = 0; i < RM_GetGasComponentsCount(id); i++)
+    {
+    status = RM_GetGasComponentsName(id, i, line1, 100);
+    sprintf(line, "%4s%20s\n", "    ", line1);
+    strcat(input, line);
+    }
+"""
+function RM_GetGasComponentsName(id::Int, num::Int, chem_name::AbstractString, l::Int)
+  IRM_RESULT=ccall((:RM_GetGasComponentsName, Lib_PhreeqcRM_path), Cint,
+  (Cint, Cint, Ptr{UInt8}, Cint), id, num, chem_name, l)
 end
 
 """
@@ -508,6 +713,64 @@ iphreeqc_id1 = RM_GetIPhreeqcId(id, RM_GetThreadCount(id) + 1);
 """
 function RM_GetIPhreeqcId(id::Int, i::Int)
   iphreeqc_id=ccall((:RM_GetIPhreeqcId, Lib_PhreeqcRM_path), Cint,  (Cint,Cint), id, i)
+end
+
+"""
+Returns the number of kinetic reactions in the initial-phreeqc module. RM_FindComponents must be called before RM_GetKineticReactionsCount. This method may be useful when generating selected output definitions related to kinetic reactions.
+
+Parameters
+    id	The instance id returned from RM_Create.
+
+Return values
+    The	number of kinetic reactions in the initial-phreeqc module.
+
+See also
+    RM_FindComponents, RM_GetKineticReactionsName. 
+
+C Example:
+
+    strcat(input, "  -kinetics\n");
+    for (i = 0; i < RM_GetKineticReactionsCount(id); i++)
+    {
+    status = RM_GetKineticReactionsName(id, i, line1, 100);
+    sprintf(line, "%4s%20s\n", "    ", line1);
+    strcat(input, line);
+    }
+
+"""
+function RM_GetKineticReactionsCount(id::Int)
+  n_components=ccall((:RM_GetKineticReactionsCount, Lib_PhreeqcRM_path), Cint, (Cint,), id)
+  return convert(Int, n_components)
+end
+
+"""
+Retrieves an item from the kinetic reactions list. The list includes all kinetic reactions included in any KINETICS definitions in the initial-phreeqc module. RM_FindComponents must be called before RM_GetKineticReactionsName. This method may be useful when generating selected output definitions related to kinetic reactions.
+
+Parameters
+    id	The instance id returned from RM_Create.
+    num	The number of the kinetic reaction name to be retrieved. Fortran, 1 based.
+    name	The kinetic reaction name at number num.
+    l1	The length of the maximum number of characters for name.
+
+Return values
+    IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+
+See also
+    RM_FindComponents, RM_GetKineticReactionsCount. 
+
+C Example:
+
+    strcat(input, "  -kinetics\n");
+    for (i = 0; i < RM_GetKineticReactionsCount(id); i++)
+    {
+    status = RM_GetKineticReactionsName(id, i, line1, 100);
+    sprintf(line, "%4s%20s\n", "    ", line1);
+    strcat(input, line);
+    }
+"""
+function RM_GetKineticReactionsName(id::Int, num::Int, chem_name::AbstractString, l::Int)
+  IRM_RESULT=ccall((:RM_GetKineticReactionsName, Lib_PhreeqcRM_path), Cint,
+  (Cint, Cint, Ptr{UInt8}, Cint), id, num, chem_name, l)
 end
 
 """
@@ -724,6 +987,153 @@ function RM_GetSelectedOutputRowCount(id::Int)
 end
 
 """
+Returns the number of phases in the initial-phreeqc module for which saturation indices can be calculated. RM_FindComponents must be called before RM_GetSICount. This method may be useful when generating selected output definitions related to saturation indices.
+
+Parameters
+    id	The instance id returned from RM_Create.
+
+Return values
+    The	number of phases in the initial-phreeqc module for which saturation indices could be calculated.
+
+See also
+    RM_FindComponents, RM_GetSIName. 
+
+C Example:
+
+    strcat(input, "  -saturation_indices\n");
+    for (i = 0; i < RM_GetSICount(id); i++)
+    {
+    status = RM_GetSIName(id, i, line1, 100);
+    sprintf(line, "%4s%20s\n", "    ", line1);
+    strcat(input, line);
+    }
+"""
+function RM_GetSICount(id::Int)
+  n_components=ccall((:RM_GetSICount, Lib_PhreeqcRM_path), Cint, (Cint,), id)
+  return convert(Int, n_components)
+end
+
+"""
+Retrieves an item from the list of all phases for which saturation indices can be calculated. The list includes all phases that contain only elements included in the components in the initial-phreeqc module. The list assumes that all components are present to be able to calculate the entire list of SIs; it may be that one or more components are missing in any specific cell. RM_FindComponents must be called before RM_GetSIName. This method may be useful when generating selected output definitions related to saturation indices.
+
+  Parameters
+      id	The instance id returned from RM_Create.
+      num	The number of the saturation-index-phase name to be retrieved. Fortran, 1 based.
+      name	The saturation-index-phase name at number num.
+      l1	The length of the maximum number of characters for name.
+  
+  Return values
+      IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+  
+  See also
+      RM_FindComponents, RM_GetSICount. 
+  
+  C Example:
+  
+      strcat(input, "  -saturation_indices\n");
+      for (i = 0; i < RM_GetSICount(id); i++)
+      {
+      status = RM_GetSIName(id, i, line1, 100);
+      sprintf(line, "%4s%20s\n", "    ", line1);
+      strcat(input, line);
+      }
+"""
+function RM_GetSIName(id::Int, num::Int, chem_name::AbstractString, l::Int)
+  IRM_RESULT=ccall((:RM_GetSIName, Lib_PhreeqcRM_path), Cint,
+  (Cint, Cint, Ptr{UInt8}, Cint), id, num, chem_name, l)
+end
+
+"""
+Returns the number of solid solution components in the initial-phreeqc module. RM_FindComponents must be called before RM_GetSolidSolutionComponentsCount. This method may be useful when generating selected output definitions related to solid solutions.
+
+Parameters
+    id	The instance id returned from RM_Create.
+
+Return values
+    The	number of solid solution components in the initial-phreeqc module.
+
+See also
+    RM_FindComponents, RM_GetSolidSolutionComponentsName, RM_GetSolidSolutionName. 
+
+C Example:
+
+    strcat(input, "  -solid_solutions\n");
+    for (i = 0; i < RM_GetSolidSolutionComponentsCount(id); i++)
+    {
+    status = RM_GetSolidSolutionComponentsName(id, i, line1, 100);
+    status = RM_GetSolidSolutionName(id, i, line2, 100);
+    sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+    strcat(input, line);
+    }
+"""
+function RM_GetSolidSolutionComponentsCount(id::Int)
+  n_components=ccall((:RM_GetSolidSolutionComponentsCount, Lib_PhreeqcRM_path), Cint, (Cint,), id)
+  return convert(Int, n_components)
+end
+
+"""
+Retrieves an item from the solid solution components list. The list includes all solid solution components included in any SOLID_SOLUTIONS definitions in the initial-phreeqc module. RM_FindComponents must be called before RM_GetSolidSolutionComponentsName. This method may be useful when generating selected output definitions related to solid solutions.
+
+Parameters
+    id	The instance id returned from RM_Create.
+    num	The number of the solid solution components name to be retrieved. Fortran, 1 based.
+    name	The solid solution compnent name at number num.
+    l1	The length of the maximum number of characters for name.
+
+Return values
+    IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+
+See also
+    RM_FindComponents, RM_GetSolidSolutionComponentsCount, RM_GetSolidSolutionName. 
+
+C Example:
+
+    strcat(input, "  -solid_solutions\n");
+    for (i = 0; i < RM_GetSolidSolutionComponentsCount(id); i++)
+    {
+    status = RM_GetSolidSolutionComponentsName(id, i, line1, 100);
+    status = RM_GetSolidSolutionName(id, i, line2, 100);
+    sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+    strcat(input, line);
+    }
+"""
+function RM_GetSolidSolutionComponentsName(id::Int, num::Int, chem_name::AbstractString, l::Int)
+  IRM_RESULT=ccall((:RM_GetSolidSolutionComponentsName, Lib_PhreeqcRM_path), Cint,
+  (Cint, Cint, Ptr{UInt8}, Cint), id, num, chem_name, l)
+end
+
+"""
+Retrieves an item from the solid solution names list. The list includes solid solution names included in SOLID_SOLUTIONS definitions in the initial-phreeqc module. The solid solution names vector is the same length as the solid solution components vector and provides the corresponding name of solid solution containing the component. RM_FindComponents must be called before RM_GetSolidSolutionName. This method may be useful when generating selected output definitions related to solid solutions.
+
+Parameters
+    id	The instance id returned from RM_Create.
+    num	The number of the solid solution name to be retrieved. Fortran, 1 based.
+    name	The solid solution name at number num.
+    l1	The length of the maximum number of characters for name.
+
+Return values
+    IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+
+See also
+    RM_FindComponents, RM_GetSolidSolutionComponentsCount, RM_GetSolidSolutionComponentsName. 
+
+C Example:
+
+    strcat(input, "  -solid_solutions\n");
+    for (i = 0; i < RM_GetSolidSolutionComponentsCount(id); i++)
+    {
+    status = RM_GetSolidSolutionComponentsName(id, i, line1, 100);
+    status = RM_GetSolidSolutionName(id, i, line2, 100);
+    sprintf(line, "%4s%20s%3s%20s\n", "    ", line1, " # ", line2);
+    strcat(input, line);
+    }
+"""
+function RM_GetSolidSolutionName(id::Int, num::Int, chem_name::AbstractString, l::Int)
+  IRM_RESULT=ccall((:RM_GetSolidSolutionName, Lib_PhreeqcRM_path), Cint,
+  (Cint, Cint, Ptr{UInt8}, Cint), id, num, chem_name, l)
+end
+
+"""
 Transfer solution volumes from the reaction cells to the array given in the argument list (vol). Solution volumes are those calculated by the reaction module. Only the following databases distributed with PhreeqcRM have molar volume information needed to accurately calculate solution volume: phreeqc.dat, Amm.dat, and pitzer.dat.
 
 Parameters
@@ -809,6 +1219,34 @@ status = RM_GetSpeciesD25(id, diffc);
 function RM_GetSpeciesD25(id::Int, diffc::Array{Float64,1})
   IRM_RESULT=ccall((:RM_GetSpeciesD25, Lib_PhreeqcRM_path), Cint,
   (Cint,Ptr{Cdouble}), id, diffc)
+end
+
+"""
+Transfer aqueous-species log10 activity coefficients to the array argument (species_log10gammas) This method is intended for use with multicomponent-diffusion transport calculations, and RM_SetSpeciesSaveOn must be set to true. The list of aqueous species is determined by RM_FindComponents and includes all aqueous species that can be made from the set of components.
+
+Parameters
+    id	The instance id returned from RM_Create.
+    species_log10gammas	Array to receive the aqueous species concentrations. Dimension of the array is (nxyz, nspecies), where nxyz is the number of user grid cells (RM_GetGridCellCount), and nspecies is the number of aqueous species (RM_GetSpeciesCount). Values for inactive cells are set to 1e30.
+
+Return values
+    IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+
+See also
+    RM_FindComponents, RM_GetSpeciesConcentrations, RM_GetSpeciesCount, RM_GetSpeciesD25, RM_GetSpeciesName, RM_GetSpeciesSaveOn, RM_GetSpeciesZ, RM_SetSpeciesSaveOn, RM_SpeciesConcentrations2Module.
+
+C Example:
+
+    status = RM_SetSpeciesSaveOn(id, 1);
+    ncomps = RM_FindComponents(id);
+    nspecies = RM_GetSpeciesCount(id);
+    nxyz = RM_GetGridCellCount(id);
+    species_log10gammas = (double *) malloc((size_t) (nxyz * nspecies * sizeof(double)));
+    status = RM_RunCells(id);
+    status = RM_GetSpeciesLog10Gammas(id, species_log10gammas);
+"""
+function RM_GetSpeciesLog10Gammas(id::Int, species_log10gammas::Array{Float64,1})
+  IRM_RESULT=ccall((:RM_GetSpeciesLog10Gammas, Lib_PhreeqcRM_path), Cint,
+  (Cint,Ptr{Cdouble}), id, species_log10gammas)
 end
 
 """
@@ -904,6 +1342,127 @@ status = RM_GetStartCell(id, sc);
 function RM_GetStartCell(id::Int, sc::Array{Int32,1})
   IRM_RESULT=ccall((:RM_GetStartCell, Lib_PhreeqcRM_path), Cint,
   (Cint,Ptr{Cint}), id, sc)
+end
+
+"""
+Retrieves the surface name (such as "Hfo") that corresponds with the surface species name. The lists of surface species names and surface names are the same length. RM_FindComponents must be called before RM_GetSurfaceName. This method may be useful when generating selected output definitions related to surfaces.
+
+Parameters
+    id	The instance id returned from RM_Create.
+    num	The number of the surface name to be retrieved. Fortran, 1 based.
+    name	The surface name associated with surface species num.
+    l1	The length of the maximum number of characters for name.
+
+Return values
+    IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+
+See also
+    RM_FindComponents, RM_GetSurfaceSpeciesCount, RM_GetSurfaceSpeciesName, RM_GetSurfaceType. 
+
+C Example:
+
+    for (i = 0; i < RM_GetSurfaceSpeciesCount(id); i++)
+    {
+    status = RM_GetSurfaceSpeciesName(id, i, line1, 100);
+    status = RM_GetSurfaceType(id, i, line2, 100);
+    status = RM_GetSurfaceName(id, i, line3, 100);
+    sprintf(line, "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
+    strcat(input, line);
+    }
+"""
+function RM_GetSurfaceName(id::Int, num::Int, chem_name::AbstractString, l::Int)
+  IRM_RESULT=ccall((:RM_GetSurfaceName, Lib_PhreeqcRM_path), Cint,
+  (Cint, Cint, Ptr{UInt8}, Cint), id, num, chem_name, l)
+end
+
+"""
+Returns the number of surface species (such as "Hfo_wOH") in the initial-phreeqc module. RM_FindComponents must be called before RM_GetSurfaceSpeciesCount. This method may be useful when generating selected output definitions related to surfaces.
+
+Parameters
+    id	The instance id returned from RM_Create.
+
+Return values
+    The	number of surface species in the initial-phreeqc module.
+
+See also
+    RM_FindComponents, RM_GetSurfaceSpeciesName, RM_GetSurfaceType, RM_GetSurfaceName. 
+
+C Example:
+
+    for (i = 0; i < RM_GetSurfaceSpeciesCount(id); i++)
+    {
+    status = RM_GetSurfaceSpeciesName(id, i, line1, 100);
+    status = RM_GetSurfaceType(id, i, line2, 100);
+    status = RM_GetSurfaceName(id, i, line3, 100);
+    sprintf(line, "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
+    strcat(input, line);
+    }
+"""
+function RM_GetSurfaceSpeciesCount(id::Int)
+  n_components=ccall((:RM_GetSurfaceSpeciesCount, Lib_PhreeqcRM_path), Cint, (Cint,), id)
+  return convert(Int, n_components)
+end
+
+"""
+Retrieves an item from the surface species list. The list of surface species (for example, "Hfo_wOH") is derived from the list of components (RM_FindComponents) and the list of all surface types (such as "Hfo_w") that are included in SURFACE definitions in the initial-phreeqc module. RM_FindComponents must be called before RM_GetSurfaceSpeciesName. This method may be useful when generating selected output definitions related to surfaces.
+
+Parameters
+    id	The instance id returned from RM_Create.
+    num	The number of the surface type to be retrieved. Fortran, 1 based.
+    name	The surface species name at number num.
+    l1	The length of the maximum number of characters for name.
+
+Return values
+    IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+
+See also
+    RM_FindComponents, RM_GetSurfaceSpeciesCount, RM_GetSurfaceType, RM_GetSurfaceName. 
+
+C Example:
+
+    for (i = 0; i < RM_GetSurfaceSpeciesCount(id); i++)
+    {
+    status = RM_GetSurfaceSpeciesName(id, i, line1, 100);
+    status = RM_GetSurfaceType(id, i, line2, 100);
+    status = RM_GetSurfaceName(id, i, line3, 100);
+    sprintf(line, "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
+    strcat(input, line);
+    }
+"""
+function RM_GetSurfaceSpeciesName(id::Int, num::Int, chem_name::AbstractString, l::Int)
+  IRM_RESULT=ccall((:RM_GetSurfaceSpeciesName, Lib_PhreeqcRM_path), Cint,
+  (Cint, Cint, Ptr{UInt8}, Cint), id, num, chem_name, l)
+end
+
+"""
+Retrieves the surface site type (such as "Hfo_w") that corresponds with the surface species name. The lists of surface species names and surface species types are the same length. RM_FindComponents must be called before RM_GetSurfaceType. This method may be useful when generating selected output definitions related to surfaces.
+
+Parameters
+    id	The instance id returned from RM_Create.
+    num	The number of the surface type to be retrieved. Fortran, 1 based.
+    name	The surface type associated with surface species num.
+    l1	The length of the maximum number of characters for name.
+
+Return values
+    IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+
+See also
+    RM_FindComponents, RM_GetSurfaceSpeciesCount, RM_GetSurfaceSpeciesName, RM_GetSurfaceName. 
+
+C Example:
+
+    for (i = 0; i < RM_GetSurfaceSpeciesCount(id); i++)
+    {
+    status = RM_GetSurfaceSpeciesName(id, i, line1, 100);
+    status = RM_GetSurfaceType(id, i, line2, 100);
+    status = RM_GetSurfaceName(id, i, line3, 100);
+    sprintf(line, "%4s%20s%3s%20s%20s\n", "    ", line1, " # ", line2, line3);
+    strcat(input, line);
+    }
+"""
+function RM_GetSurfaceType(id::Int, num::Int, chem_name::AbstractString, l::Int)
+  IRM_RESULT=ccall((:RM_GetSurfaceType, Lib_PhreeqcRM_path), Cint,
+  (Cint, Cint, Ptr{UInt8}, Cint), id, num, chem_name, l)
 end
 
 """
@@ -2056,12 +2615,21 @@ export RM_Abort,
  RM_GetConcentrations,
  RM_GetDensity,
  RM_GetEndCell,
+ RM_GetEquilibriumPhasesCount,
+ RM_GetEquilibriumPhasesName,
  RM_GetErrorString,
  RM_GetErrorStringLength,
+ RM_GetExchangeName,
+ RM_GetExchangeSpeciesCount,
+ RM_GetExchangeSpeciesName,
  RM_GetFilePrefix,
+ RM_GetGasComponentsCount,
+ RM_GetGasComponentsName,
  RM_GetGfw,
  RM_GetGridCellCount,
  RM_GetIPhreeqcId,
+ RM_GetKineticReactionsCount,
+ RM_GetKineticReactionsName,
  RM_GetNthSelectedOutputUserNumber,
  RM_GetSaturation,
  RM_GetSelectedOutput,
@@ -2069,14 +2637,24 @@ export RM_Abort,
  RM_GetSelectedOutputCount,
  RM_GetSelectedOutputHeading,
  RM_GetSelectedOutputRowCount,
+ RM_GetSICount,
+ RM_GetSIName,
+ RM_GetSolidSolutionComponentsCount,
+ RM_GetSolidSolutionComponentsName,
+ RM_GetSolidSolutionName,
  RM_GetSolutionVolume,
  RM_GetSpeciesConcentrations,
  RM_GetSpeciesCount,
  RM_GetSpeciesD25,
+ RM_GetSpeciesLog10Gammas,
  RM_GetSpeciesName,
  RM_GetSpeciesSaveOn,
  RM_GetSpeciesZ,
  RM_GetStartCell,
+ RM_GetSurfaceName,
+ RM_GetSurfaceSpeciesCount,
+ RM_GetSurfaceSpeciesName,
+ RM_GetSurfaceType,
  RM_GetThreadCount,
  RM_GetTime,
  RM_GetTimeConversion,
@@ -2140,5 +2718,6 @@ export RM_Abort,
 
  # convenience functions
  include("JPhreeqc_extra.jl")
+ include("sample_solutions.jl")
 
 end
