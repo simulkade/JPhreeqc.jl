@@ -32,6 +32,25 @@ function getSpeciesList(id::Int)
   return species
 end
 
+"""
+Need to be fixed
+"""
+function getSurfaceSpeciesList(id::Int)
+	RM_SetSpeciesSaveOn(id, 1)
+	ncomps = RM_FindComponents(id)
+	n_species = RM_GetSpeciesCount(id)
+	species = Array{String}(n_species)
+	  for i = 1:n_species
+		  species[i] = string(zeros(20))
+		  status = RM_GetSpeciesName(id, i-1, species[i], length(species[i]))
+	  species[i]=strip(species[i], '\0')
+	  end
+	return species
+end
+
+"""
+setDefaultPhreeqcProperties(id::Int)
+"""
 function setDefaultPhreeqcProperties(id::Int)
   # Set properties
   status = RM_SetErrorHandlerMode(id, 2)
@@ -45,6 +64,9 @@ function setDefaultPhreeqcProperties(id::Int)
 	status = RM_SetPartitionUZSolids(id, 0)
 end
 
+"""
+setDefaultPhreeqcUnits(id::Int)
+"""
 function setDefaultPhreeqcUnits(id::Int)
   status = RM_SetUnitsSolution(id, 2)      # 1, mg/L 2, mol/L 3, kg/kgs
 	status = RM_SetUnitsPPassemblage(id, 0)  # 0, mol/L RV 1, mol/L water 2 mol/L rock
@@ -104,6 +126,9 @@ function getSelectedOutputArray(id::Int, nxyz::Int, isel::Int)
   return reshape(selected_out, nxyz, col)
 end
 
+"""
+getSelectedOutputHeading(id::Int, isel::Int)
+"""
 function getSelectedOutputHeading(id::Int, isel::Int)
   n_user = RM_GetNthSelectedOutputUserNumber(id, isel)
   status = RM_SetCurrentSelectedOutputUserNumber(id, Int(n_user))
