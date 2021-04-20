@@ -33,7 +33,8 @@ function getSpeciesList(id::Int)
 end
 
 """
-Need to be fixed
+getSurfaceSpeciesList(id)
+returns a list of the surface species available in the input file/string
 """
 function getSurfaceSpeciesList(id::Int)
 	RM_SetSpeciesSaveOn(id, 1)
@@ -86,27 +87,27 @@ function setInitialVectors(id::Int, nxyz::Int; aq_solution::Int=1, eq_phase::Int
 	ic1 = zeros(Int, nxyz, 7)
 	ic2 = zeros(Int, nxyz, 7)
 	f1 = zeros(Float64, nxyz, 7)
-	ic1[:,1] = 1       # Solution 1
-	ic1[:,2] = -1      # Equilibrium phases none
-	ic1[:,3] = -1       # Exchange none
-	ic1[:,4] = -1      # Surface 1
-	ic1[:,5] = -1      # Gas phase none
-	ic1[:,6] = -1      # Solid solutions none
-	ic1[:,7] = -1      # Kinetics none
-	ic2[:,1] = -1      # Solution none
-	ic2[:,2] = -1      # Equilibrium phases none
-	ic2[:,3] = -1      # Exchange none
-	ic2[:,4] = -1      # Surface none
-	ic2[:,5] = -1      # Gas phase none
-	ic2[:,6] = -1      # Solid solutions none
-	ic2[:,7] = -1      # Kinetics none
-	f1[:,1]  = 1.0      # Mixing fraction ic1 Solution
-	f1[:,2] = 1.0      # Mixing fraction ic1 Equilibrium phases
-	f1[:,3] = 1.0      # Mixing fraction ic1 Exchange 1
-	f1[:,4] = 1.0      # Mixing fraction ic1 Surface
-	f1[:,5] = 1.0      # Mixing fraction ic1 Gas phase
-	f1[:,6] = 1.0      # Mixing fraction ic1 Solid solutions
-	f1[:,7] = 1.0      # Mixing fraction ic1 Kinetics
+	ic1[:,1] .= 1       # Solution 1
+	ic1[:,2] .= -1      # Equilibrium phases none
+	ic1[:,3] .= -1       # Exchange none
+	ic1[:,4] .= -1      # Surface 1
+	ic1[:,5] .= -1      # Gas phase none
+	ic1[:,6] .= -1      # Solid solutions none
+	ic1[:,7] .= -1      # Kinetics none
+	ic2[:,1] .= -1      # Solution none
+	ic2[:,2] .= -1      # Equilibrium phases none
+	ic2[:,3] .= -1      # Exchange none
+	ic2[:,4] .= -1      # Surface none
+	ic2[:,5] .= -1      # Gas phase none
+	ic2[:,6] .= -1      # Solid solutions none
+	ic2[:,7] .= -1      # Kinetics none
+	f1[:,1]  .= 1.0      # Mixing fraction ic1 Solution
+	f1[:,2] .= 1.0      # Mixing fraction ic1 Equilibrium phases
+	f1[:,3] .= 1.0      # Mixing fraction ic1 Exchange 1
+	f1[:,4] .= 1.0      # Mixing fraction ic1 Surface
+	f1[:,5] .= 1.0      # Mixing fraction ic1 Gas phase
+	f1[:,6] .= 1.0      # Mixing fraction ic1 Solid solutions
+	f1[:,7] .= 1.0      # Mixing fraction ic1 Kinetics
 	return ic1, ic2, f1
 end
 
