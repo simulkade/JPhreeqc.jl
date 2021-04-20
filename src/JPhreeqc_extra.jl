@@ -16,6 +16,38 @@ function getComponentList(id::Int)
 end
 
 """
+getKineticReactionsList(id::Int)
+returns the names of the kinetic reactions
+"""
+function getKineticReactionsList(id::Int)
+	ncomps = RM_FindComponents(id)
+	n_kinetics = RM_GetKineticReactionsCount(id)
+	components = Array{String}(undef, n_kinetics)
+	  for i = 1:n_kinetics
+		  components[i] = string(zeros(Int, 30))
+		  status = RM_GetKineticReactionsName(id, i-1, components[i], length(components[i]))
+	  components[i]=strip(components[i], '\0')
+	  end
+	return components
+end
+
+"""
+getGasComponentsList(id::Int)
+returns the name of the gas phase components
+"""
+function getGasComponentsList(id::Int)
+	ncomps = RM_FindComponents(id)
+	n_gas = RM_GetGasComponentsCount(id)
+	components = Array{String}(undef, n_gas)
+	  for i = 1:n_gas
+		  components[i] = string(zeros(Int, 30))
+		  status = RM_GetGasComponentsName(id, i-1, components[i], length(components[i]))
+	  components[i]=strip(components[i], '\0')
+	  end
+	return components
+end
+
+"""
 species_list=getSpeciesList(id)
 returns the list of ionic species as a cell array of strings
 """
@@ -23,7 +55,7 @@ function getSpeciesList(id::Int)
   RM_SetSpeciesSaveOn(id, 1)
   ncomps = RM_FindComponents(id)
   n_species = RM_GetSpeciesCount(id)
-  species = Array{String}(n_species)
+  species = Array{String}(undef, n_species)
 	for i = 1:n_species
 		species[i] = string(zeros(20))
 		status = RM_GetSpeciesName(id, i-1, species[i], length(species[i]))
@@ -35,19 +67,87 @@ end
 """
 getSurfaceSpeciesList(id)
 returns a list of the surface species available in the input file/string
+The list is an array of (n_species x 3) where first to thirsd column
+give surface species name, surface type, and surface name, e.g.
+"Hfo_sO-"    "Hfo_s"  "Hfo"
 """
 function getSurfaceSpeciesList(id::Int)
-	RM_SetSpeciesSaveOn(id, 1)
 	ncomps = RM_FindComponents(id)
-	n_species = RM_GetSpeciesCount(id)
-	species = Array{String}(n_species)
-	  for i = 1:n_species
-		  species[i] = string(zeros(20))
-		  status = RM_GetSpeciesName(id, i-1, species[i], length(species[i]))
-	  species[i]=strip(species[i], '\0')
-	  end
+	n_species = RM_GetSurfaceSpeciesCount(id)
+	surface_species = Array{String}(undef, n_species, 3)
+	for i=1:n_species
+		for j=1:3
+			surface_species[i, j] = string(zeros(Int, 30))
+		end
+	end
+	for i = 1:n_species
+		status = RM_GetSurfaceSpeciesName(id, i-1, surface_species[i, 1], length(surface_species[i, 1]))
+		status = RM_GetSurfaceType(id, i-1, surface_species[i, 2], length(surface_species[i, 2]))
+		status = RM_GetSurfaceName(id, i-1, surface_species[i, 3], length(surface_species[i, 3]))
+	end
+	surface_species .= strip.(surface_species, '\0')
+	return surface_species
+end
+
+"""
+getEquilibriumPhasesList(id::Int)
+Returns the list of equilibrium phases in the current PhreeqcRM instance
+"""
+function getEquilibriumPhasesList(id::Int)
+	ncomps = RM_FindComponents(id)
+	n_species = RM_GetEquilibriumPhasesCount(id)
+	species = Array{String}(undef, n_species)
+	for i = 1:n_species
+		species[i] = string(zeros(Int, 30))
+		status = RM_GetEquilibriumPhasesName(id, i-1, species[i], length(species[i]))
+		species[i]=strip(species[i], '\0')
+	end
 	return species
 end
+
+"""
+getExchangeSpeciesList(id::Int)
+Returns the exchange name and exchange species in a matrix of n_exchange_species x 2
+"""
+function getExchangeSpeciesList(id::Int)
+	ncomps = RM_FindComponents(id)
+	n_species = RM_GetExchangeSpeciesCount(id)
+	exchange_species = Array{String}(undef, n_species, 2)
+	for i=1:n_species
+		for j=1:2
+			exchange_species[i, j] = string(zeros(Int, 30))
+		end
+	end
+	for i = 1:n_species
+		status = RM_GetExchangeSpeciesName(id, i-1, exchange_species[i, 1], length(exchange_species[i, 1]))
+		status = RM_GetExchangeName(id, i-1, exchange_species[i, 2], length(exchange_species[i, 2]))
+	end
+	exchange_species .= strip.(exchange_species, '\0')
+	return exchange_species
+end
+
+
+"""
+getSolidSolutionComponentsList(id::Int)
+returnd the name and components of the solid solutions
+"""
+function getSolidSolutionComponentsList(id::Int)
+	ncomps = RM_FindComponents(id)
+	n_species = RM_GetSolidSolutionComponentsCount(id)
+	exchange_species = Array{String}(undef, n_species, 2)
+	for i=1:n_species
+		for j=1:2
+			exchange_species[i, j] = string(zeros(Int, 30))
+		end
+	end
+	for i = 1:n_species
+		status = RM_GetSolidSolutionComponentsName(id, i-1, exchange_species[i, 1], length(exchange_species[i, 1]))
+		status = RM_GetSolidSolutionName(id, i-1, exchange_species[i, 2], length(exchange_species[i, 2]))
+	end
+	exchange_species .= strip.(exchange_species, '\0')
+	return exchange_species
+end
+
 
 """
 setDefaultPhreeqcProperties(id::Int)
