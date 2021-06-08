@@ -26,7 +26,7 @@ elseif Sys.islinux()
             println("libphreeqcrm.so downloaded successfully.")
         catch
             @warn "Could not downlaod the library file libphreeqcrm.so"
-            @warn "Down load it from: https://github.com/simulkade/PhreeqcRM/releases/download/3.7/libphreeqcrm-3.7.0.so"
+            @warn "Download it from: https://github.com/simulkade/PhreeqcRM/releases/download/3.7/libphreeqcrm-3.7.0.so"
             @warn "and copy it into the JPhreeqc/lib folder"
         end
     end
