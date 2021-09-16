@@ -183,6 +183,29 @@ function RM_DecodeError(id::Int, e_result::Int)
   (Cint,Cint),id,e_result)
 end
 
+
+"""
+Writes the contents of all workers to file in _RAW formats, including SOLUTIONs and all reactants.
+
+Parameters
+id	The instance id returned from RM_Create.
+dump_on	Signal for writing the dump file: 1 true, 0 false.
+append	Signal to append to the contents of the dump file: 1 true, 0 false.
+Return values
+IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+See also
+RM_SetDumpFileName.
+C Example:
+dump_on = 1;
+append = 0;
+status = RM_SetDumpFileName(id, "advection_c.dmp");
+status = RM_DumpModule(id, dump_on, append);
+"""
+function RM_DumpModule(id::Int, dump_on::Int, append::Int)
+  IRM_RESULT=ccall((:RM_DumpModule,Lib_PhreeqcRM_path),Cint,
+  (Cint,Cint, Cint), id, dump_on, append)
+end
+
 """
 Send an error message to the screen, the output file, and the log file.
 
@@ -593,6 +616,27 @@ function RM_GetFilePrefix(id::Int, prefix::AbstractString, l::Int)
 end
 
 """
+Transfer moles of gas components from each reaction cell to the vector given in the argument list (gas_moles).
+
+Parameters
+id	The instance id returned from RM_Create.
+gas_moles	Vector to receive the moles of gas components. Dimension of the vector must be ngas_comps times nxyz, where, ngas_comps is the result of RM_GetGasComponentsCount, and nxyz is the number of user grid cells (RM_GetGridCellCount). If a gas component is not defined for a cell, the number of moles is set to -1. Values for inactive cells are set to 1e30.
+Return values
+IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+See also
+RM_FindComponents, RM_GetGasComponentsCount, RM_GetGasCompPressures, RM_GetGasCompPhi, RM_GetGasPhaseVolume, RM_SetGasCompMoles, RM_SetGasPhaseVolume.
+C Example:
+ngas_comps = RM_GetGasComponentsCount();
+gas_moles = (double *) malloc((size_t) (ngas_comps * nxyz * sizeof(double)));
+status = RM_RunCells(id);
+status = RM_GetGasCompMoles(id, gas_moles);
+"""
+function RM_GetGasCompMoles(id::Int, gas_moles::Array{Float64, 1})
+  IRM_RESULT=ccall((:RM_GetGasCompMoles, Lib_PhreeqcRM_path), Cint, (Cint, Ptr{Cdouble}), id, gas_moles)
+  return IRM_RESULT
+end
+
+"""
 Returns the number of gas phase components in the initial-phreeqc module. RM_FindComponents must be called before RM_GetGasComponentsCount. This method may be useful when generating selected output definitions related to gas phases.
 
 Parameters
@@ -647,6 +691,68 @@ C Example:
 function RM_GetGasComponentsName(id::Int, num::Int, chem_name::AbstractString, l::Int)
   IRM_RESULT=ccall((:RM_GetGasComponentsName, Lib_PhreeqcRM_path), Cint,
   (Cint, Cint, Ptr{UInt8}, Cint), id, num, chem_name, l)
+end
+
+"""
+Transfer fugacity coefficients (phi) of gas components from each reaction cell to the vector given in the argument list (gas_phi). Fugacity of a gas component is equal to its pressure times the fugacity coefficient.
+
+Parameters
+id	The instance id returned from RM_Create.
+gas_phi	Vector to receive the fugacity coefficients of gas components. Dimension of the vector must be ngas_comps times nxyz, where, ngas_comps is the result of RM_GetGasComponentsCount, and nxyz is the number of user grid cells (RM_GetGridCellCount). If a gas component is not defined for a cell, the fugacity coefficient is set to -1. Values for inactive cells are set to 1e30.
+Return values
+IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+See also
+RM_FindComponents, RM_GetGasComponentsCount, RM_GetGasCompMoles, RM_GetGasCompPressures, RM_GetGasPhaseVolume, RM_SetGasCompMoles, RM_SetGasPhaseVolume.
+C Example:
+ngas_comps = RM_GetGasComponentsCount();
+gas_phi = (double *) malloc((size_t) (ngas_comps * nxyz * sizeof(double)));
+status = RM_RunCells(id);
+status = RM_GetGasCompPhi(id, gas_phi);
+"""
+function RM_GetGasCompPhi(id::Int, gas_phi::Array{Float64, 1})
+  IRM_RESULT=ccall((:RM_GetGasCompPhi, Lib_PhreeqcRM_path), Cint, (Cint, Ptr{Cdouble}), id, gas_phi)
+  return IRM_RESULT
+end
+
+"""
+Transfer pressures of gas components from each reaction cell to the vector given in the argument list (gas_pressure).
+
+Parameters
+id	The instance id returned from RM_Create.
+gas_pressure	Vector to receive the pressures of gas components. Dimension of the vector must be ngas_comps times nxyz, where, ngas_comps is the result of RM_GetGasComponentsCount, and nxyz is the number of user grid cells (RM_GetGridCellCount). If a gas component is not defined for a cell, the pressure is set to -1. Values for inactive cells are set to 1e30.
+Return values
+IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+See also
+RM_FindComponents, RM_GetGasComponentsCount, RM_GetGasCompMoles, RM_GetGasCompPhi, RM_GetGasPhaseVolume, RM_SetGasCompMoles, RM_SetGasPhaseVolume.
+C Example:
+ngas_comps = RM_GetGasComponentsCount();
+gas_pressure = (double *) malloc((size_t) (ngas_comps * nxyz * sizeof(double)));
+status = RM_RunCells(id);
+status = RM_GetGasCompPressures(id, gas_pressure);
+"""
+function RM_GetGasCompPressures(id::Int, gas_pressure::Array{Float64, 1})
+  IRM_RESULT=ccall((:RM_GetGasCompPressures, Lib_PhreeqcRM_path), Cint, (Cint, Ptr{Cdouble}), id, gas_pressure)
+  return IRM_RESULT
+end
+
+"""
+Transfer volume of gas from each reaction cell to the vector given in the argument list (gas_volume).
+
+Parameters
+id	The instance id returned from RM_Create.
+gas_volume	Array to receive the gas phase volumes. Dimension of the vector must be nxyz, where, nxyz is the number of user grid cells (RM_GetGridCellCount). If a gas phase is not defined for a cell, the volume is set to -1. Values for inactive cells are set to 1e30.
+Return values
+IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+See also
+RM_FindComponents, RM_GetGasComponentsCount, RM_GetGasCompMoles, RM_GetGasCompPressures, RM_GetGasCompPhi, RM_SetGasCompMoles, RM_SetGasPhaseVolume.
+C Example:
+gas_volume = (double *) malloc((size_t) (nxyz * sizeof(double)));
+status = RM_RunCells(id);
+status = RM_GetGasPhaseVolume(id, gas_volume);
+"""
+function RM_GetGasPhaseVolume(id::Int, gas_volume::Array{Float64, 1})
+  IRM_RESULT=ccall((:RM_GetGasPhaseVolume, Lib_PhreeqcRM_path), Cint, (Cint, Ptr{Cdouble}), id, gas_volume)
+  return IRM_RESULT
 end
 
 """
@@ -1247,6 +1353,30 @@ C Example:
 function RM_GetSpeciesLog10Gammas(id::Int, species_log10gammas::Array{Float64,1})
   IRM_RESULT=ccall((:RM_GetSpeciesLog10Gammas, Lib_PhreeqcRM_path), Cint,
   (Cint,Ptr{Cdouble}), id, species_log10gammas)
+end
+
+"""
+Transfer aqueous-species log10 molalities to the array argument (species_log10molalities) To use this method RM_SetSpeciesSaveOn must be set to true. The list of aqueous species is determined by RM_FindComponents and includes all aqueous species that can be made from the set of components.
+
+Parameters
+id	The instance id returned from RM_Create.
+species_log10molalities	Array to receive the aqueous species log10 molalities. Dimension of the array is (nxyz, nspecies), where nxyz is the number of user grid cells (RM_GetGridCellCount), and nspecies is the number of aqueous species (RM_GetSpeciesCount). Values for inactive cells are set to 1e30.
+Return values
+IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+See also
+RM_FindComponents, RM_GetSpeciesConcentrations, RM_GetSpeciesCount, RM_GetSpeciesD25, RM_GetSpeciesLog10Gammas, RM_GetSpeciesName, RM_GetSpeciesSaveOn, RM_GetSpeciesZ, RM_SetSpeciesSaveOn, RM_SpeciesConcentrations2Module.
+C Example:
+status = RM_SetSpeciesSaveOn(id, 1);
+ncomps = RM_FindComponents(id);
+nspecies = RM_GetSpeciesCount(id);
+nxyz = RM_GetGridCellCount(id);
+species_log10molalities = (double *) malloc((size_t) (nxyz * nspecies * sizeof(double)));
+status = RM_RunCells(id);
+status = RM_GetSpeciesLog10Molalities(id, species_log10molalities);
+"""
+function RM_GetSpeciesLog10Molalities(id::Int, species_log10molalities::Array{Float64,1})
+  IRM_RESULT=ccall((:RM_GetSpeciesLog10Molalities, Lib_PhreeqcRM_path), Cint,
+  (Cint,Ptr{Cdouble}), id, species_log10molalities)
 end
 
 """
@@ -2047,6 +2177,23 @@ function RM_SetErrorHandlerMode(id::Int, mode::Int)
 end
 
 """
+Set the property that controls whether error messages are generated and displayed. Messages include PHREEQC "ERROR" messages, and any messages written with RM_ErrorMessage.
+Parameters
+id	The instance id returned from RM_Create.
+tf	1, enable error messages; 0, disable error messages. Default is 1.
+Return values
+IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+See also
+RM_ErrorMessage, RM_ScreenMessage.
+C Example:
+status = RM_SetErrorOn(id, 1);
+"""
+function RM_SetErrorOn(id::Int, tf::Int)
+  IRM_RESULT=ccall((:RM_SetErrorOn, Lib_PhreeqcRM_path), Cint,
+  (Cint,Cint), id, tf)
+end
+
+"""
 Set the prefix for the output (prefix.chem.txt) and log (prefix.log.txt) files. These files are opened by RM_OpenFiles.
 
 Parameters
@@ -2063,6 +2210,43 @@ status = RM_OpenFiles(id);
 function RM_SetFilePrefix(id::Int, prefix::AbstractString)
   IRM_RESULT=ccall((:RM_SetFilePrefix, Lib_PhreeqcRM_path), Cint,
   (Cint,Cstring), id, prefix)
+end
+
+"""
+Transfer moles of gas components from the vector given in the argument list (gas_moles) to each reaction cell.
+
+Parameters
+id	The instance id returned from RM_Create.
+gas_moles	Vector of moles of gas components. Dimension of the vector must be ngas_comps times nxyz, where, ngas_comps is the result of RM_GetGasComponentsCount, and nxyz is the number of user grid cells (RM_GetGridCellCount). If the number of moles is set to a negative number, the gas component will not be defined for the GAS_PHASE of the reaction cell.
+Return values
+IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+See also
+RM_FindComponents, RM_GetGasComponentsCount, RM_GetGasCompMoles, RM_GetGasCompPressures, RM_GetGasPhaseVolume, RM_GetGasCompPhi, RM_SetGasPhaseVolume.
+C Example:
+ngas_comps = RM_GetGasComponentsCount();
+gas_moles = (double *) malloc((size_t) (ngas_comps * nxyz * sizeof(double)));
+"""
+function RM_SetGasCompMoles(id::Int, gas_moles::Array{Float64, 1})
+  IRM_RESULT=ccall((:RM_SetGasCompMoles, Lib_PhreeqcRM_path), Cint, (Cint, Ptr{Cdouble}), id, gas_moles)
+  return IRM_RESULT
+end
+
+"""
+Transfer volumes of gas phases from the array given in the argument list (gas_volume) to each reaction cell. The gas-phase volume affects the pressures calculated for fixed-volume gas phases. If a gas-phase volume is defined with this method for a GAS_PHASE in a cell, the gas phase is forced to be a fixed-volume gas phase.
+
+Parameters
+id	The instance id returned from RM_Create.
+gas_volume	Vector of volumes for each gas phase. Dimension of the vector must be nxyz, where, nxyz is the number of user grid cells (RM_GetGridCellCount). If the volume is set to a negative number for a cell, the gas-phase volume for that cell is not changed.
+Return values
+IRM_RESULT	0 is success, negative is failure (See RM_DecodeError).
+See also
+RM_FindComponents, RM_GetGasComponentsCount, RM_GetGasCompMoles, RM_GetGasCompPressures, RM_GetGasPhaseVolume, RM_GetGasCompPhi, RM_SetGasCompMoles.
+C Example:
+gas_volume = (double *) malloc((size_t) (nxyz * sizeof(double)));
+"""
+function RM_SetGasPhaseVolume(id::Int, gas_volume::Array{Float64, 1})
+  IRM_RESULT=ccall((:RM_SetGasPhaseVolume, Lib_PhreeqcRM_path), Cint, (Cint, Ptr{Cdouble}), id, gas_volume)
+  return IRM_RESULT
 end
 
 # MPI functions are not wrapped!
@@ -2562,6 +2746,68 @@ status = RM_RunCells(id);
 function RM_SpeciesConcentrations2Module(id::Int, species_conc::Array{Float64,1})
   IRM_RESULT=ccall((:RM_SpeciesConcentrations2Module, Lib_PhreeqcRM_path), Cint,
   (Cint,Ptr{Cdouble}), id, species_conc)
+end
+
+"""
+Reset the state of the module to a state previously saved with RM_StateSave. The chemistry of all model cells are reset, including SOLUTIONs, EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, KINETICS, SOLID_SOLUTIONs, and SURFACEs. MIXes, REACTIONs, REACTION_PRESSUREs, and REACTION_TEMPERATUREs will be reset for each cell, if they were defined in the worker IPhreeqc instances at the time the state was saved. The distribution of cells among the workersand the chemistry of fully or partially unsaturated cells are also reset to the saved state. The state to be applied is identified by an integer.
+
+Parameters
+id	The instance id returned from RM_Create.
+istate	Integer identifying the state that is to be applied.
+Return values
+IRM_RESULT	0 is success, negative is failure(See RM_DecodeError).
+See also
+RM_StateSave and RM_StateDelete.
+C++ Example:
+status = RM_StateSave(id, 1);
+...
+status = RM_StateApply(id, 1);
+status = RM_StateDelete(id, 1);
+"""
+function RM_StateApply(id::Int, istate::Int)
+  IRM_RESULT=ccall((:RM_StateApply, Lib_PhreeqcRM_path), Cint,
+  (Cint,Cint), id, istate)
+end
+
+"""
+Delete a state previously saved with RM_StateSave.
+
+Parameters
+id	The instance id returned from RM_Create.
+istate	Integer identifying the state that is to be deleted.
+Return values
+IRM_RESULT	0 is success, negative is failure(See RM_DecodeError).
+See also
+RM_StateSave and ref RM_StateApply.
+C++ Example:
+status = RM_StateSave(id, 1);
+...
+status = RM_StateApply(id, 1);
+status = RM_StateDelete(id, 1);
+"""
+function RM_StateDelete(id::Int, istate::Int)
+  IRM_RESULT=ccall((:RM_StateDelete, Lib_PhreeqcRM_path), Cint,
+  (Cint,Cint), id, istate)
+end
+
+"""
+Save the state of the chemistry in all model cells, including SOLUTIONs, EQUILIBRIUM_PHASES, EXCHANGEs, GAS_PHASEs, KINETICS, SOLID_SOLUTIONs, and SURFACEs. Although not generally used, MIXes, REACTIONs, REACTION_PRESSUREs, and REACTION_TEMPERATUREs will be saved for each cell, if they have been defined in the worker IPhreeqc instances. The distribution of cells among the workersand the chemistry of fully or partially unsaturated cells are also saved.The state is saved in memory; use RM_DumpModule to save the state to file.PhreeqcRM can be reset to this state by using RM_StateApply. A state is identified by an integer, and multiple states can be saved.
+
+Parameters
+id	The instance id returned from RM_Create.
+istate	Integer identifying the state that is saved.
+Return values
+IRM_RESULT	0 is success, negative is failure(See RM_DecodeError).
+See also
+RM_DumpModule, RM_StateApply, and RM_StateDelete.
+C++ Example:
+status = RM_StateSave(id, 1);
+...
+status = RM_StateApply(id, 1);
+"""
+function RM_StateSave(id::Int, istate::Int)
+  IRM_RESULT=ccall((:RM_StateSave, Lib_PhreeqcRM_path), Cint,
+  (Cint,Cint), id, istate)
 end
 
 """
